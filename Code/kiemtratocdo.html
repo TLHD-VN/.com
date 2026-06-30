@@ -69,7 +69,6 @@
 
         .tutorial-box { font-size: 14px; text-align: left; line-height: 1.6; color: #334155; background: #f8fafc; padding: 20px; border-radius: 14px; border-left: 5px solid #1a73e8; margin-bottom: 20px;}
 
-        /* ĐỒNG BỘ FLOATING LEFT TỪ GAME 1 */
         .floating-left { position: fixed; left: 15px; bottom: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 1000; }
         .left-item { position: relative; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; }
         .left-item .icon-wrapper { color: #fff; width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; transition: all 0.3s ease; position: relative; z-index: 2; border: 2px solid white; }
@@ -88,7 +87,6 @@
         .tab-btn:hover { color: #1e293b; }
         .tab-btn.active { background: #ffffff; color: #eab308; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
 
-        /* ĐỒNG BỘ AUDIO CONTROL GÓC TRÊN TRÁI TỪ GAME 1 */
         .music-controls { position: fixed; top: 15px; left: 15px; display: flex; align-items: center; z-index: 1000; }
         .music-btn { width: 38px; height: 36px; display: flex; align-items: center; justify-content: center; background-color: #ffffff; color: #16a34a; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.05); outline: none; }
         .music-btn:hover { background-color: #16a34a; color: white; transform: scale(1.05); }
@@ -216,7 +214,7 @@
                 <button class="tab-btn" data-tab="Mức D">Mức D</button>
             </div>
 
-            <div id="leaderboardContent" style="max-height: 350px; overflow-y: auto; text-align: left;">
+            <div id="leaderboardContent" style="max-height: 350px; overflow-y: auto; text-align: left; padding: 5px;">
                 Đang tải dữ liệu...
             </div>
         </div>
@@ -227,13 +225,14 @@
             <span class="modal-close" id="closeResultModal" style="position:absolute; right:20px; top:15px; font-size:30px; cursor:pointer;">&times;</span>
             <h2 id="resultTitle" style="color:#16a34a;">🎉 Hoàn Thành Xuất Sắc!</h2>
             
-            <h3 style="color:#475569; margin-top: 15px; font-size:16px;">Thống kê lượt chơi</h3>
-            <p id="resultTime" style="font-size: 1.1em; margin: 8px 0;"></p>
-            <p id="resultProgress" style="font-size: 1.1em; margin: 8px 0; font-weight: 600; color: #16a34a;"></p>
-            <p id="resultErrors" style="font-size: 1.1em; margin: 8px 0; font-weight: bold; color: #ef4444;"></p>
-            
-            <p id="resultAccuracy" style="font-weight: bold; color: #1a73e8; font-size: 1.1em; margin: 8px 0;"></p>
-            <p id="resultRT" style="font-size: 1.1em; margin: 8px 0; color: #0d6efd; font-weight: bold;"></p>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 15px; text-align: left; margin-top: 15px;">
+                <h3 style="color:#475569; font-size:15px; border-bottom:1px solid #cbd5e1; padding-bottom:5px; margin-bottom:10px;"><i class="fa-solid fa-chart-simple"></i> Thống kê lượt chơi</h3>
+                <p id="resultTime" style="font-size: 13.5px; margin: 6px 0; color:#334155;"></p>
+                <p id="resultProgress" style="font-size: 13.5px; margin: 6px 0; font-weight: 600; color: #16a34a;"></p>
+                <p id="resultErrors" style="font-size: 13.5px; margin: 6px 0; font-weight: bold; color: #ef4444;"></p>
+                <p id="resultAccuracy" style="font-weight: bold; color: #1a73e8; font-size: 13.5px; margin: 6px 0;"></p>
+                <p id="resultRT" style="font-size: 13.5px; margin: 6px 0; color: #0d6efd; font-weight: bold;"></p>
+            </div>
             
             <hr style="margin: 20px 0; border-top: 1px dashed #cbd5e1;">
             <h3 style="color:#475569; font-size:16px;">Đánh giá khả năng xử lý</h3>
@@ -258,7 +257,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyA4YeCvjrLI0bRtvotCOVfGLLsXjVJyb0",
@@ -277,7 +276,8 @@
             const bgMusic = document.getElementById('bgMusic');
             const btn = document.getElementById("bgmToggleBtn");
             
-            // Hàm chuyển đổi âm nhạc đồng bộ Game 1
+            bgMusic.volume = 0.3; 
+
             window.toggleMusic = function() {
                 if (!bgMusic || !btn) return;
                 if (bgMusic.paused) {
@@ -312,7 +312,6 @@
             }
             triggerAutoPlayOnLoad();
 
-            // Quản lý Modal thuật ngữ
             window.showGlossary = function() { document.getElementById('glossaryModal').classList.add('active'); };
             document.getElementById('closeGlossaryModal').onclick = () => document.getElementById('glossaryModal').classList.remove('active');
             document.getElementById('closeGlossaryBtn').onclick = () => document.getElementById('glossaryModal').classList.remove('active');
@@ -604,6 +603,8 @@
                     studentId: userInfo.id || "N/A",
                     name: userInfo.name,
                     schoolClass: schoolClassInfo,
+                    school: userInfo.school,  
+                    class: userInfo.class,    
                     gameName: finalGameName,
                     score: `Kết nối: ${nextNodeIndex}/${sequence.length} | Lỗi: ${resultObj.errors} | PX: ${resultObj.avgRT}s`,
                     timePlayed: resultObj.time + " giây",
@@ -701,12 +702,12 @@
 
                 saveGameScoreToSheet(currentGameResult);
 
-                document.getElementById('resultTime').textContent = `⏱️ Tổng thời gian: ${timeSpent} giây`;
-                document.getElementById('resultProgress').textContent = `🎯 Tổng điểm đã kết nối: ${nextNodeIndex}/${sequence.length}`;
-                document.getElementById('resultErrors').textContent = `❌ Tổng số lần ấn sai (Lỗi): ${errors}`;
-                document.getElementById('resultAccuracy').textContent = `🎯 Tỷ lệ chính xác ván đấu: ${acc.toFixed(0)}%`;
+                document.getElementById('resultTime').innerHTML = `<b>⏱️ Tổng thời gian:</b> <span style="color:#1e293b;">${timeSpent} giây</span>`;
+                document.getElementById('resultProgress').innerHTML = `<b>🎯 Tổng điểm đã kết nối:</b> <span style="color:#1e293b;">${nextNodeIndex}/${sequence.length} điểm</span>`;
+                document.getElementById('resultErrors').innerHTML = `<b>❌ Tổng số lần ấn sai (Lỗi):</b> ${errors} lần`;
+                document.getElementById('resultAccuracy').innerHTML = `🎯 Tỷ lệ chính xác ván đấu: <span style="font-size:16px; color:#1a73e8; font-weight:bold;">${acc.toFixed(0)}%</span>`;
                 document.getElementById('resultRT').textContent = `⚡ Tốc độ phản xạ trung bình: ${avgRT} giây / điểm`;
-                document.getElementById('resultRisk').textContent = `Nguy cơ bốc đồng xử lý: ${risk}`;
+                document.getElementById('resultRisk').innerHTML = `Nguy cơ bốc đồng xử lý: <span style="color:${risk==='Thấp'?'#16a34a':(risk==='Trung bình'?'#f59e0b':'#ef4444')}; font-weight:bold;">${risk}</span>`;
                 document.getElementById('resultAdvice').textContent = `💡 Lời khuyên: ${advice}`;
                 modals.result.classList.add('active');
             }
@@ -715,7 +716,6 @@
                 const { jsPDF } = jspdf; 
                 const doc = new jsPDF();
                 
-                // Bộ hàm lọc bỏ dấu Tiếng Việt tự động phòng lỗi font
                 const removeAccents = (str) => {
                     if (!str) return "N/A";
                     return str.normalize("NFD")
@@ -734,24 +734,19 @@
                 const adviceText = removeAccents(currentGameResult.advice || "");
                 const riskText = removeAccents(currentGameResult.risk || "Thap");
 
-                // --- PHẦN MỸ THUẬT ĐỒ HỌA & CĂN LỀ CỐ ĐỊNH ---
-                
-                // 1. Tiêu đề (Header) bản báo cáo
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(18);
-                doc.setTextColor(26, 115, 232); // Màu xanh dương tối ưu thương hiệu
+                doc.setTextColor(26, 115, 232); 
                 doc.text("BAO CAO KET QUA KIEM TRA TRUONG PHO THONG", 20, 25);
                 
                 doc.setFontSize(14);
                 doc.setTextColor(71, 85, 105);
                 doc.text("KHA NANG CHU Y VA TOC DO XU LY (TRAIL MAKING TEST)", 20, 33);
                 
-                // Thanh chia cắt ngang
                 doc.setDrawColor(26, 115, 232);
                 doc.setLineWidth(0.5);
                 doc.line(20, 38, 190, 38);
                 
-                // 2. Mục I: Thông tin cá nhân học sinh
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(11);
                 doc.setTextColor(30, 41, 59);
@@ -764,7 +759,6 @@
                 doc.text("Lop / Truong hoc :", 25, 70); doc.text(`${classUnsigned} ${schoolUnsigned ? '- ' + schoolUnsigned : ''}`, 65, 70);
                 doc.text("Tuoi he thong :", 25, 77); doc.text(userInfo.age || "N/A", 65, 77);
                 
-                // 3. Mục II: Cấu hình bài test
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(11);
                 doc.text("II. CAU HINH PHIEN DO LUONG", 20, 90);
@@ -775,17 +769,14 @@
                 doc.text("Gioi han thoi gian :", 25, 105); doc.text("240 giay (4 phut)", 65, 105);
                 doc.text("Dinh dang chuoi :", 25, 112); doc.text((currentLevel === 'B' || currentLevel === 'D') ? "Xen ke So - Chu cai" : "Chuoi So tang dan", 65, 112);
 
-                // 4. Mục III: Khung kết quả dạng Hộp (Card Box) căn thẳng lề Tab
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(11);
                 doc.text("III. CHI TIET CHI SO KET QUA", 20, 126);
                 
-                // Vẽ hộp bao quanh nền xám nhạt tinh tế
                 doc.setDrawColor(226, 232, 240);
                 doc.setFillColor(248, 250, 252);
                 doc.rect(20, 132, 170, 50, "FD");
                 
-                // Các chỉ số căn thẳng hàng theo cột X = 95
                 doc.setFont("helvetica", "normal");
                 doc.setFontSize(10);
                 doc.text("Tong thoi gian hoan thanh :", 25, 141); doc.setFont("helvetica", "bold"); doc.text(`${currentGameResult.time} giay`, 95, 141); doc.setFont("helvetica", "normal");
@@ -794,7 +785,6 @@
                 doc.text("Ty le chinh xac toan phan :", 25, 165); doc.setFont("helvetica", "bold"); doc.setTextColor(26, 115, 232); doc.text(`${accuracyVal}%`, 95, 165); doc.setFont("helvetica", "normal"); doc.setTextColor(30, 41, 59);
                 doc.text("Toc do phan xa trung binh :", 25, 173); doc.setFont("helvetica", "bold"); doc.setTextColor(13, 148, 136); doc.text(`${currentGameResult.avgRT} giay / diem`, 95, 173);
                 
-                // 5. Mục IV: Kết luận đánh giá hành vi
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(11);
                 doc.setTextColor(30, 41, 59);
@@ -818,11 +808,9 @@
                 doc.setFont("helvetica", "italic");
                 doc.setTextColor(100, 116, 139);
                 
-                // Hàm chia nhỏ dòng tự động ép chữ không tràn qua lề phải (Word Wrap)
-                const splitAdvice = doc.splitTextToSize(adviceText, 155);
+                const splitAdvice = doc.splitTextToSize(splitAdvice, 155);
                 doc.text(splitAdvice, 25, 221);
                 
-                // Footer chân trang
                 doc.setDrawColor(241, 245, 249);
                 doc.line(20, 268, 190, 268);
                 doc.setFont("helvetica", "normal");
@@ -845,34 +833,62 @@
             }
 
             let cachedLeaderboardData = []; 
-            onValue(ref(db, 'scores'), (snapshot) => {
-                if (snapshot.exists()) {
-                    let serverScores = Object.values(snapshot.val());
-                    let validScores = serverScores.filter(s => s.gameName && s.gameName.includes("Trail Making Test"));
+            window.globalUsersData = {};
+
+            window.showLeaderboard = function() {
+                modals.leaderboard.classList.add('active');
+                let lbContent = document.getElementById("leaderboardContent");
+                lbContent.innerHTML = "<p style='text-align:center; padding: 20px 0;'>🔄 Đang đồng bộ hóa dữ liệu trực tiếp từ đám mây Cloud...</p>";
+                
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('.tab-btn[data-tab="Mức A"]').classList.add('active');
+
+                // Đồng bộ dữ liệu chéo từ cả 2 nút scores và users trên Firebase
+                Promise.all([get(ref(db, 'scores')), get(ref(db, 'users'))]).then(([scoresSnapshot, usersSnapshot]) => {
+                    if (!scoresSnapshot.exists()) {
+                        lbContent.innerHTML = "<p style='text-align:center; color: #555;'>Chưa có dữ liệu bảng xếp hạng.</p>";
+                        return;
+                    }
+                    let rawData = scoresSnapshot.val();
+                    window.globalUsersData = usersSnapshot.exists() ? usersSnapshot.val() : {};
+
+                    let serverScores = Object.values(rawData);
+                    let validScores = serverScores.filter(s => s.gameName && s.gameName.includes("Trail Making Test") && !s.gameName.includes("[STRESS_REJECT_LB]"));
 
                     cachedLeaderboardData = validScores.map(s => {
                         let errorMatch = s.score ? s.score.match(/Lỗi:\s*(\d+)/) : null;
-                        let errorVal = errorMatch ? parseInt(errorMatch[1]) : 0;
+                        let errorVal = errorMatch ? parseInt(errorMatch[1]) : (s.rawErrors || 0);
+                        
+                        let connectMatch = s.score ? s.score.match(/Kết nối:\s*(\d+)\/(\d+)/) : null;
+                        let correctVal = connectMatch ? parseInt(connectMatch[1]) : (s.rawCorrect || 0);
+
+                        let currentRisk = "Thấp";
+                        if (s.accuracy) {
+                            let matchRisk = s.accuracy.match(/\(([^)]+)\)/);
+                            currentRisk = matchRisk ? matchRisk[1] : "Thấp";
+                        }
+                        if (s.rawRisk) currentRisk = s.rawRisk;
+
                         return { 
                             name: s.name, 
                             studentId: s.studentId || "N/A",
                             game: s.gameName, 
                             score: s.score, 
-                            timeStr: s.timePlayed,
+                            timeStr: s.timePlayed || "0 giây",
                             rawTime: parseInt(s.timePlayed) || 999,
-                            rawErrors: errorVal
+                            rawErrors: errorVal,
+                            rawCorrect: correctVal,
+                            displayRisk: currentRisk,
+                            schoolClass: s.schoolClass || "",
+                            school: s.school || "",
+                            class: s.class || ""
                         };
                     });
-                }
-            }, (err) => {
-                console.error("Lỗi đồng bộ Firebase:", err);
-            });
-
-            window.showLeaderboard = function() {
-                modals.leaderboard.classList.add('active');
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelector('.tab-btn[data-tab="Mức A"]').classList.add('active');
-                renderLeaderboard('Mức A');
+                    renderLeaderboard('Mức A');
+                }).catch((err) => {
+                    console.error(err);
+                    lbContent.innerHTML = "<p style='text-align:center; color: #ef4444;'>⚠️ Lỗi kết nối cơ sở dữ liệu Firebase đám mây.</p>";
+                });
             };
 
             function renderLeaderboard(levelFilter) {
@@ -883,8 +899,17 @@
                 }
 
                 let filteredData = cachedLeaderboardData.filter(item => item.game && item.game.includes(levelFilter));
+                filteredData = filteredData.filter(item => item.displayRisk.includes("Thấp") || item.displayRisk.includes("Trung bình"));
+
+                let noteBoxHtml = `
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 14px; font-size: 11px; color: #166534; font-weight: 600; text-align: left; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-circle-info" style="font-size:13px; color:#22c55e; flex-shrink:0;"></i> 
+                        <span>Mỗi tài khoản tự động lưu thành tích ván chơi tối ưu nhất của mình.</span>
+                    </div>
+                `;
+
                 if (filteredData.length === 0) {
-                    lbContent.innerHTML = `<p style='text-align:center; color: #555;'>Chưa có thứ hạng dữ liệu mức <b>${levelFilter}</b>.</p>`;
+                    lbContent.innerHTML = noteBoxHtml + `<p style='padding: 15px 0; text-align:center; color:#94a3b8; font-style:italic;'>Chưa có thứ hạng dữ liệu mức <b>${levelFilter}</b>.</p>`;
                     return;
                 }
                 
@@ -894,10 +919,10 @@
                     if (!uniqueStudents[idKey]) {
                         uniqueStudents[idKey] = item;
                     } else {
-                        if (item.rawErrors < uniqueStudents[idKey].rawErrors) {
+                        if (item.rawTime < uniqueStudents[idKey].rawTime) {
                             uniqueStudents[idKey] = item;
-                        } else if (item.rawErrors === uniqueStudents[idKey].rawErrors) {
-                            if (item.rawTime < uniqueStudents[idKey].rawTime) {
+                        } else if (item.rawTime === uniqueStudents[idKey].rawTime) {
+                            if (item.rawErrors < uniqueStudents[idKey].rawErrors) {
                                 uniqueStudents[idKey] = item;
                             }
                         }
@@ -906,23 +931,80 @@
 
                 let finalRankArray = Object.values(uniqueStudents);
                 finalRankArray.sort((a, b) => {
-                    if (a.rawErrors !== b.rawErrors) return a.rawErrors - b.rawErrors;
-                    return a.rawTime - b.rawTime;
+                    if (a.rawTime !== b.rawTime) return a.rawTime - b.rawTime;
+                    return a.rawErrors - b.rawErrors;
                 });
 
-                let html = "<ul style='list-style-type: none; padding: 0; font-size: 1.1em; line-height: 1.8;'>";
+                let html = noteBoxHtml + "<div style='display: flex; flex-direction: column; gap: 10px;'>";
+                
                 finalRankArray.slice(0, 10).forEach((item, index) => {
-                    let medal = index === 0 ? "🥇" : (index === 1 ? "🥈" : (index === 2 ? "🥉" : `<span style="display:inline-block; width: 25px; text-align:center; font-weight:800; color:#64748b;">${index + 1}</span>`));
+                    let medal = index === 0 ? "🥇" : (index === 1 ? "🥈" : (index === 2 ? "🥉" : `${index+1}`));
+                    let badgeBg = "rgba(34, 197, 94, 0.1)", badgeColor = "#22c55e";
+                    if (item.displayRisk.includes("Trung bình")) { badgeBg = "rgba(245, 158, 11, 0.1)"; badgeColor = "#f59e0b"; }
+
+                    // Tra cứu tài khoản gốc từ users
+                    let studentId = item.studentId;
+                    let userProfile = (window.globalUsersData && studentId) ? window.globalUsersData[studentId] : null;
+
+                    let schoolPart = (userProfile ? (userProfile.school || userProfile.schoolName || userProfile.truong) : "") || item.school || item.schoolName || item.truong || "";
+                    let classPart = (userProfile ? (userProfile.class || userProfile.lop) : "") || item.class || item.lop || "";
+                    
+                    // Thuật toán tách chuỗi dự phòng cho data cũ khuyết trường lẻ
+                    if (!schoolPart && item.schoolClass) {
+                        let separators = [/ \- /, /\-/, / \– /, /\–/, / \— /, /\—/, /,/, /\|/, /\//];
+                        let parts = [];
+                        for (let sep of separators) {
+                            let matches = item.schoolClass.split(sep);
+                            if (matches.length > 1) { parts = matches; break; }
+                        }
+                        if (parts.length > 1) {
+                            let first = parts[0].trim(); let second = parts[1].trim();
+                            if (first.toLowerCase().includes("lớp") || /^\d/.test(first)) {
+                                classPart = first; schoolPart = second;
+                            } else {
+                                schoolPart = first; classPart = second;
+                            }
+                        } else {
+                            let text = item.schoolClass.trim();
+                            if (text.toLowerCase().includes("lớp") || /^\d/.test(text)) classPart = text;
+                            else if (text !== "") schoolPart = text;
+                        }
+                    }
+
+                    if (!classPart || classPart === "Khối lớp --" || classPart.trim() === "") {
+                        classPart = "---";
+                    } else if (!classPart.toLowerCase().startsWith("lớp")) {
+                        classPart = "Lớp " + classPart;
+                    }
+
+                    if (!schoolPart || schoolPart === "Trường học" || schoolPart === "Không xác định" || schoolPart.trim() === "") {
+                        schoolPart = "---";
+                    }
+                    
                     html += `
-                        <li style="padding: 12px 10px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                            <span>
-                                ${medal} <b style="color:#1e293b;">${item.name}</b> 
-                                <br><small style="color: #7f8c8d; margin-left: 35px;">${item.game} - ${item.score}</small>
-                            </span>
-                            <span style="color: #1a73e8; font-weight: bold;">${item.timeStr}</span>
-                        </li>`;
+                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 15px; text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                                <div style="font-size: 16px; font-weight: 800; width: 25px; text-align: center; color: #64748b; flex-shrink: 0;">${medal}</div>
+                                <div style="min-width: 0; flex: 1;">
+                                    <div style="font-weight: 700; color: #1e293b; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name}</div>
+                                    <div style="color: #64748b; font-size: 11px; margin-top: 4px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                                        <span style="background: #e0f2fe; color: #0369a1; padding: 1px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;"><i class="fa-solid fa-school"></i> ${schoolPart}</span>
+                                        <span style="background: #f1f5f9; color: #475569; padding: 1px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">${classPart}</span>
+                                        <span style="font-weight: 500; color: #94a3b8;">• ⏱️ ${item.timeStr}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: right; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                                <div style="font-weight: 800; font-size: 12px; color: #475569;">
+                                    <span style="color:#22c55e;">🎯 ${item.rawCorrect}</span>
+                                    <span style="color:#cbd5e1; margin: 0 2px;">|</span>
+                                    <span style="color:#ef4444;">❌ ${item.rawErrors}</span>
+                                </div>
+                                <span style="background: ${badgeBg}; color: ${badgeColor}; padding: 2px 8px; border-radius: 50px; font-size: 10px; font-weight: 700; display: inline-block;">Mức: ${item.displayRisk}</span>
+                            </div>
+                        </div>`;
                 });
-                html += "</ul>";
+                html += "</div>";
                 lbContent.innerHTML = html;
             }
 
