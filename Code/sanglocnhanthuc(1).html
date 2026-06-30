@@ -361,6 +361,7 @@
     let cachedLeaderboardData = []; 
     let currentGameResult = {};
     let userInfo = {};
+    window.globalUsersData = {}; // Bộ nhớ tạm lưu trữ danh sách users đồng bộ từ Cloud
 
     let savedUser = localStorage.getItem("user");
     if(savedUser) {
@@ -638,7 +639,12 @@
         let scoreId = "SCORE_" + userInfo.id + "_" + Date.now();
 
         set(ref(db, 'scores/' + scoreId), {
-            studentId: userInfo.id, name: userInfo.hoTen, schoolClass: schoolClassInfo, gameName: finalGameName,
+            studentId: userInfo.id, 
+            name: userInfo.hoTen, 
+            schoolClass: schoolClassInfo,
+            school: userInfo.truong,  
+            class: userInfo.lop,      
+            gameName: finalGameName,
             score: `Đúng: ${resultObj.correct}/${totalPairs} | Lỗi: ${resultObj.errors} | Stress: ${resultObj.stressLevel}`, timePlayed: resultObj.time + " giây",
             accuracy: `Nguy cơ: ${resultObj.risk}`, timestamp: Date.now(),
             rawCorrect: resultObj.correct, rawErrors: resultObj.errors, rawRisk: resultObj.risk, rawTime: resultObj.time,
@@ -713,9 +719,14 @@
         const firstTab = document.querySelector('#lbTabsContainer .tab-btn[data-tab="Cơ bản"]');
         if(firstTab) firstTab.classList.add('active');
 
-        get(ref(db, 'scores')).then((snapshot) => {
-            if (!snapshot.exists()) { lbContent.innerHTML = "<p>Chưa có dữ liệu lịch sử đo lường.</p>"; return; }
-            let rawData = snapshot.val();
+        // Bước 1 nâng cấp: Đọc đồng thời cả nút 'scores' và nút 'users' trên Firebase
+        Promise.all([get(ref(db, 'scores')), get(ref(db, 'users'))]).then(([scoresSnapshot, usersSnapshot]) => {
+            if (!scoresSnapshot.exists()) { lbContent.innerHTML = "<p>Chưa có dữ liệu lịch sử đo lường.</p>"; return; }
+            
+            let rawData = scoresSnapshot.val();
+            // Lưu dữ liệu danh sách users vào biến toàn cục để đối chiếu ID ở bước sau
+            window.globalUsersData = usersSnapshot.exists() ? usersSnapshot.val() : {};
+            
             cachedLeaderboardData = window.flattenDynamicNodes(rawData, 'gameName').filter(s => s.gameName && s.gameName.includes("Memory Matching") && !s.gameName.includes("[STRESS_REJECT_LB]"));
             renderLeaderboard('Cơ bản');
         }).catch((err) => { 
@@ -776,9 +787,52 @@
             let badgeBg = "rgba(34, 197, 94, 0.1)", badgeColor = "#22c55e";
             if (item.displayRisk.includes("Trung bình")) { badgeBg = "rgba(245, 158, 11, 0.1)"; badgeColor = "#f59e0b"; }
 
-            let rawString = item.schoolClass || "Khối lớp --";
-            let classPart = rawString.includes(" - ") ? rawString.split(" - ")[0] : rawString;
-            let schoolPart = rawString.includes(" - ") ? rawString.split(" - ")[1] : "Trường học";
+            // Bước 2 nâng cấp: Dùng studentId để tìm tài khoản tương ứng gốc trong danh sách users
+            let studentId = item.studentId;
+            let userProfile = (window.globalUsersData && studentId) ? window.globalUsersData[studentId] : null;
+
+            // Ưu tiên bốc tên Trường và Lớp trực tiếp từ nick đăng ký của tài khoản users gốc
+            let schoolPart = (userProfile ? (userProfile.school || userProfile.schoolName || userProfile.truong) : "") || item.school || item.schoolName || item.truong || "";
+            let classPart = (userProfile ? (userProfile.class || userProfile.lop) : "") || item.class || item.lop || "";
+
+            // Nếu là dòng dữ liệu cũ bị khuyết thông tin tài khoản, chạy thuật toán bóc tách từ chuỗi dự phòng schoolClass
+            if (!schoolPart && item.schoolClass) {
+                let separators = [/ \- /, /\-/, / \– /, /\–/, / \— /, /\—/, /,/, /\|/, /\//];
+                let parts = [];
+                for (let sep of separators) {
+                    let matches = item.schoolClass.split(sep);
+                    if (matches.length > 1) { parts = matches; break; }
+                }
+                
+                if (parts.length > 1) {
+                    let first = parts[0].trim();
+                    let second = parts[1].trim();
+                    if (first.toLowerCase().includes("lớp") || /^\d/.test(first)) {
+                        classPart = first; schoolPart = second;
+                    } else {
+                        schoolPart = first; classPart = second;
+                    }
+                } else {
+                    let text = item.schoolClass.trim();
+                    if (text.toLowerCase().includes("lớp") || /^\d/.test(text)) {
+                        classPart = text;
+                    } else if (text !== "") {
+                        schoolPart = text;
+                    }
+                }
+            }
+
+            // Chuẩn hóa định dạng hiển thị Lớp
+            if (!classPart || classPart === "Khối lớp --" || classPart.trim() === "") {
+                classPart = "---";
+            } else if (!classPart.toLowerCase().startsWith("lớp")) {
+                classPart = "Lớp " + classPart;
+            }
+
+            // Chuẩn hóa định dạng hiển thị Trường (Tuyệt đối không hiện chữ chung chung "Trường học")
+            if (!schoolPart || schoolPart === "Trường học" || schoolPart === "Không xác định" || schoolPart.trim() === "") {
+                schoolPart = "---";
+            }
 
             html += `
                 <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 15px; text-align: left;">
