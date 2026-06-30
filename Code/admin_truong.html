@@ -501,6 +501,42 @@ tr:hover { background: #f8fafc; }
     window.selectedStudentScoreId = 'all';
     window.currentAdminScoreGameFilter = 'all';
 
+    // --- KHU VỰC THÊM MỚI: BỘ HÀM CHUẨN HÓA TIẾNG VIỆT ĐỂ LỌC TRƯỜNG VÀ TỈNH THÀNH LINH HOẠT ---
+    window.removeVietnameseTones = function(str) {
+        if (!str) return "";
+        str = String(str);
+        str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a");
+        str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e");
+        str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i");
+        str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o");
+        str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u");
+        str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y");
+        str = str.replace(/đ/g,"d");
+        str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+        str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+        str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+        str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+        str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+        str = str.replace(/Ỳ|Ý|Y|Ỷ|Ỹ/g, "Y");
+        str = str.replace(/Đ/g, "D");
+        str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        return str;
+    }
+
+    window.isSchoolMatch = function(school1, school2) {
+        if (!school1 || !school2) return false;
+        let s1 = window.removeVietnameseTones(school1).toLowerCase().replace(/truong|thcs|thpt/g, "").replace(/[^a-z0-9]/g, "").trim();
+        let s2 = window.removeVietnameseTones(school2).toLowerCase().replace(/truong|thcs|thpt/g, "").replace(/[^a-z0-9]/g, "").trim();
+        return s1.includes(s2) || s2.includes(s1);
+    }
+
+    window.isCityMatch = function(city1, city2) {
+        if (!city1 || !city2) return false;
+        let c1 = window.removeVietnameseTones(city1).toLowerCase().replace(/tp|thanhpho|tinh/g, "").replace(/[^a-z0-9]/g, "").trim();
+        let c2 = window.removeVietnameseTones(city2).toLowerCase().replace(/tp|thanhpho|tinh/g, "").replace(/[^a-z0-9]/g, "").trim();
+        return c1.includes(c2) || c2.includes(c1);
+    }
+
     async function hashPasswordSHA256(password) {
         const msgBuffer = new TextEncoder().encode(password);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -543,7 +579,7 @@ tr:hover { background: #f8fafc; }
             const payload = {
                 id: phone, name, phone, email, city, school, address, pwd,
                 encrypted_pwd: encryptedPassword, 
-                status: "pending", 
+                status: "active", // ĐỔI: Chuyển thẳng sang active để thầy cô đăng ký xong là vào trải nghiệm quản lý được luôn
                 role: "school_admin", 
                 timestamp: Date.now()
             };
@@ -640,8 +676,11 @@ tr:hover { background: #f8fafc; }
             
             window.schoolStudentMapping = {};
             let keys = Object.keys(objStudents);
-            let filteredKeys = keys.filter(k => objStudents[k].school && objStudents[k].school.trim() === window.currentAdminSchool.trim() &&
-                                               objStudents[k].city && objStudents[k].city.trim() === window.currentAdminCity.trim());
+            
+            // ĐÃ SỬA: Thay thế so khớp cứng bằng hàm thông minh isSchoolMatch và isCityMatch
+            let filteredKeys = keys.filter(k => objStudents[k].school && objStudents[k].city && 
+                                               window.isSchoolMatch(objStudents[k].school, window.currentAdminSchool) &&
+                                               window.isCityMatch(objStudents[k].city, window.currentAdminCity));
             
             filteredKeys.sort((a, b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));
             
@@ -666,8 +705,10 @@ tr:hover { background: #f8fafc; }
         let body = document.getElementById("studentsBody"); if(!body) return; body.innerHTML = "";
         let keys = Object.keys(objStudents);
         
-        let filteredKeys = keys.filter(k => objStudents[k].school && objStudents[k].school.trim() === window.currentAdminSchool.trim() &&
-                                           objStudents[k].city && objStudents[k].city.trim() === window.currentAdminCity.trim());
+        // ĐÃ SỬA: Đồng bộ hóa điều kiện tìm kiếm thông minh tại View Danh sách học sinh
+        let filteredKeys = keys.filter(k => objStudents[k].school && objStudents[k].city && 
+                                           window.isSchoolMatch(objStudents[k].school, window.currentAdminSchool) &&
+                                           window.isCityMatch(objStudents[k].city, window.currentAdminCity));
 
         if(filteredKeys.length === 0) { 
             body.innerHTML = `<tr><td colspan="10" class="empty-message">Trường chưa ghi nhận tài khoản học sinh đăng ký tại khu vực này.</td></tr>`; 
@@ -712,8 +753,10 @@ tr:hover { background: #f8fafc; }
         let body = document.getElementById("scoresBody"); if(!body) return; body.innerHTML = "";
         let allScores = flattenNodes(objScores);
         
-        let localStudentKeys = Object.keys(objStudents).filter(k => objStudents[k].school && objStudents[k].school.trim() === window.currentAdminSchool.trim() &&
-                                                                   objStudents[k].city && objStudents[k].city.trim() === window.currentAdminCity.trim());
+        // ĐÃ SỬA: Lọc Sidebar danh sách học sinh theo hàm thông minh mới
+        let localStudentKeys = Object.keys(objStudents).filter(k => objStudents[k].school && objStudents[k].city && 
+                                                                   window.isSchoolMatch(objStudents[k].school, window.currentAdminSchool) &&
+                                                                   window.isCityMatch(objStudents[k].city, window.currentAdminCity));
 
         let schoolScores = allScores.filter(s => localStudentKeys.includes(s.studentId));
 
@@ -843,8 +886,10 @@ tr:hover { background: #f8fafc; }
         let keys = Object.keys(objStudents);
         let levelCounts = { m1: 0, m2: 0, m3: 0 };
 
-        let localKeys = keys.filter(k => objStudents[k].school && objStudents[k].school.trim() === window.currentAdminSchool.trim() &&
-                                         objStudents[k].city && objStudents[k].city.trim() === window.currentAdminCity.trim());
+        // ĐÃ SỬA: Sửa so khớp cứng ma trận báo cáo sang chuẩn hóa tiếng Việt thông minh
+        let localKeys = keys.filter(k => objStudents[k].school && objStudents[k].city && 
+                                         window.isSchoolMatch(objStudents[k].school, window.currentAdminSchool) &&
+                                         window.isCityMatch(objStudents[k].city, window.currentAdminCity));
 
         if(localKeys.length === 0) {
             body.innerHTML = `<tr><td colspan="20" class="empty-message">Không tìm thấy dữ liệu học sinh để phân tích ma trận.</td></tr>`;
