@@ -337,7 +337,6 @@
             
             bgMusic.volume = 0.3; 
 
-            // ĐỒNG BỘ GAME 1: Hàm click để bật/tắt nhạc thủ công
             window.toggleMusic = function() {
                 if (!bgMusic || !musicToggleBtn) return;
                 if (bgMusic.paused) {
@@ -354,7 +353,6 @@
                 }
             };
 
-            // ĐỒNG BỘ GAME 1: Cơ chế chống trình duyệt chặn Autoplay (Ép chạy nhạc khi tương tác màn hình lần đầu)
             function triggerAutoPlayOnLoad() {
                 if (!bgMusic || !musicToggleBtn) return;
                 bgMusic.play().then(() => {
@@ -398,6 +396,8 @@
                 userInfo.id = parsed.id || "N/A";
             }
 
+            window.globalUsersData = {}; 
+
             const screens = { char: document.getElementById('characterScreen'), level: document.getElementById('levelSelectScreen'), game: document.getElementById('gameScreen') };
             const modals = { result: document.getElementById('resultModal'), leaderboard: document.getElementById('leaderboardModal'), stress: document.getElementById('stressModal'), tutorial: document.getElementById('tutorialModal'), glossary: document.getElementById('glossaryModal') };
             const stimEl = document.getElementById('stimulus');
@@ -412,7 +412,6 @@
             const closeTutorialBtn = document.getElementById('closeTutorialBtn');
             const closeStressBtn = document.getElementById('closeStressBtn');
 
-            // Khi người dùng bấm nút Chọn Nhân Vật -> Trình duyệt ghi nhận Tương tác và mở nhạc ngay!
             window.setChars = (go, nogo) => { 
                 goChar = go; noGoChar = nogo; 
                 document.getElementById('tutGoChar').textContent = go;
@@ -430,7 +429,7 @@
             document.getElementById('backToCharBtn').addEventListener('click', () => { screens.level.classList.remove('active'); screens.char.classList.add('active'); });
 
             showTutorialBtn.addEventListener('click', () => { modals.tutorial.classList.add('active'); });
-            closeTutorialBtn.addEventListener('click', () => { modals.tutorial.remove('active'); });
+            closeTutorialBtn.addEventListener('click', () => { modals.tutorial.classList.remove('active'); });
             document.getElementById('closeTutorialX').addEventListener('click', () => { modals.tutorial.classList.remove('active'); });
 
             window.showGlossary = function() { modals.glossary.classList.add('active'); };
@@ -523,6 +522,7 @@
             function startTimers() {
                 clearInterval(timerInterval);
                 timerInterval = setInterval(() => {
+                    if (isPaused) return;
                     timeRemaining--; let m = Math.floor(timeRemaining / 60), s = timeRemaining % 60;
                     document.getElementById('gameTimer').textContent = `⏱️ Thời gian: ${m}:${s < 10 ? '0' : ''}${s}`;
                     if (timeRemaining <= 30) document.getElementById('gameTimer').classList.add('time-warning');
@@ -619,6 +619,8 @@
                     studentId: userInfo.id || "N/A",
                     name: userInfo.name,
                     schoolClass: schoolClassInfo,
+                    school: userInfo.school,  
+                    class: userInfo.class,    
                     gameName: finalGameName,
                     score: `Đúng: ${correctCount} | Sai: ${errorCount}`,
                     timePlayed: elapsed + " giây",
@@ -684,14 +686,15 @@
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 document.querySelector('.tab-btn[data-tab="Cơ bản"]').classList.add('active');
 
-                get(ref(db, 'scores')).then((snapshot) => {
-                    if (!snapshot.exists()) {
+                Promise.all([get(ref(db, 'scores')), get(ref(db, 'users'))]).then(([scoresSnapshot, usersSnapshot]) => {
+                    if (!scoresSnapshot.exists()) {
                         lbContent.innerHTML = "<p style='text-align:center; color: #555;'>Chưa có dữ liệu người chơi nào.</p>";
                         return;
                     }
-                    let rawData = snapshot.val();
+                    let rawData = scoresSnapshot.val(); // ĐÃ FIX BIẾN LỖI TẠI ĐÂY
+                    window.globalUsersData = usersSnapshot.exists() ? usersSnapshot.val() : {};
+
                     let localScores = Object.values(rawData);
-                    
                     let validScores = localScores.filter(s => s.gameName && s.gameName.includes("Go/No-Go") && !s.gameName.includes("[STRESS_REJECT_LB]"));
 
                     cachedLeaderboardData = validScores.map(s => {
@@ -715,7 +718,12 @@
                             schoolClass: s.schoolClass || "Khối lớp --",
                             rawCorrect: correctVal,
                             rawErrors: errorVal,
-                            displayRisk: currentRisk
+                            displayRisk: currentRisk,
+                            school: s.school || "",
+                            class: s.class || "",
+                            lop: s.lop || "",
+                            truong: s.truong || "",
+                            schoolName: s.schoolName || ""
                         };
                     });
                     renderLeaderboard('Cơ bản');
@@ -777,9 +785,42 @@
                     let badgeBg = "rgba(34, 197, 94, 0.1)", badgeColor = "#22c55e";
                     if (item.displayRisk.includes("Trung bình")) { badgeBg = "rgba(245, 158, 11, 0.1)"; badgeColor = "#f59e0b"; }
 
-                    let rawString = item.schoolClass || "Khối lớp --";
-                    let classPart = rawString.includes(" - ") ? rawString.split(" - ")[0] : rawString;
-                    let schoolPart = rawString.includes(" - ") ? rawString.split(" - ")[1] : "Trường học";
+                    let studentId = item.studentId;
+                    let userProfile = (window.globalUsersData && studentId) ? window.globalUsersData[studentId] : null;
+
+                    let schoolPart = (userProfile ? (userProfile.school || userProfile.schoolName || userProfile.truong) : "") || item.school || item.schoolName || item.truong || "";
+                    let classPart = (userProfile ? (userProfile.class || userProfile.lop) : "") || item.class || item.lop || "";
+                    
+                    if (!schoolPart && item.schoolClass) {
+                        let separators = [/ \- /, /\-/, / \– /, /\–/, / \— /, /\—/, /,/, /\|/, /\//];
+                        let parts = [];
+                        for (let sep of separators) {
+                            let matches = item.schoolClass.split(sep);
+                            if (matches.length > 1) { parts = matches; break; }
+                        }
+                        if (parts.length > 1) {
+                            let first = parts[0].trim(); let second = parts[1].trim();
+                            if (first.toLowerCase().includes("lớp") || /^\d/.test(first)) {
+                                classPart = first; schoolPart = second;
+                            } else {
+                                schoolPart = first; classPart = second;
+                            }
+                        } else {
+                            let text = item.schoolClass.trim();
+                            if (text.toLowerCase().includes("lớp") || /^\d/.test(text)) classPart = text;
+                            else if (text !== "") schoolPart = text;
+                        }
+                    }
+
+                    if (!classPart || classPart === "Khối lớp --" || classPart.trim() === "") {
+                        classPart = "---";
+                    } else if (!classPart.toLowerCase().startsWith("lớp")) {
+                        classPart = "Lớp " + classPart;
+                    }
+
+                    if (!schoolPart || schoolPart === "Trường học" || schoolPart === "Không xác định" || schoolPart.trim() === "") {
+                        schoolPart = "---";
+                    }
                     
                     html += `
                         <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 15px; text-align: left;">
@@ -856,7 +897,6 @@
                 }
             });
 
-            // Kích hoạt nạp bộ lắng nghe autoplay chống chặn nhận thức lúc đầu
             triggerAutoPlayOnLoad();
         });
     </script>
