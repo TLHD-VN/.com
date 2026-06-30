@@ -11,24 +11,63 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     
     body { 
-        min-height: 100vh; display: flex; justify-content: center; align-items: center; 
+        min-height: 100vh; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
         background: linear-gradient(-45deg, #e15f41, #1a73e8, #6c5ce7, #e67e22, #10b981); 
-        background-size: 400% 400%; animation: bg 15s ease infinite; padding: 20px; 
+        background-size: 400% 400%; 
+        animation: bg 15s ease infinite; 
+        padding: 20px; 
+        overflow-y: auto; /* Giúp cuộn trang mượt mà khi bàn phím ảo điện thoại đẩy giao diện lên */
     }
     @keyframes bg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     
     .box { 
-        width: 460px; background: rgba(255, 255, 255, 0.92); 
+        width: 100%; 
+        max-width: 460px; /* Thay đổi từ cứng 460px sang linh hoạt theo tỷ lệ màn hình di động */
+        background: rgba(255, 255, 255, 0.94); 
         backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
-        border: 1px solid rgba(255, 255, 255, 0.6); padding: 40px 32px; 
-        border-radius: 24px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); 
-        color: #0f172a; position: relative; text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.6); 
+        padding: 40px 32px; 
+        border-radius: 24px; 
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); 
+        color: #0f172a; 
+        position: relative; 
+        text-align: center;
     }
     
     h2 { text-align: center; margin-bottom: 25px; font-size: 22px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
 
-    .tabs { display: flex; justify-content: center; background: #e2e8f0; padding: 6px; border-radius: 14px; margin-bottom: 25px; gap: 4px; border: 1px solid #cbd5e1; }
-    .tab-btn { flex: 1; padding: 11px 4px; border: none; background: transparent; color: #475569; font-weight: 700; font-size: 11.5px; cursor: pointer; border-radius: 10px; transition: 0.2s; white-space: nowrap; }
+    /* Thanh tab chuyển đổi thông minh, cho phép cuộn ngang vuốt ngón tay trên điện thoại nhỏ nếu thiếu không gian */
+    .tabs { 
+        display: flex; 
+        justify-content: flex-start; 
+        background: #e2e8f0; 
+        padding: 5px; 
+        border-radius: 14px; 
+        margin-bottom: 25px; 
+        gap: 4px; 
+        border: 1px solid #cbd5e1; 
+        overflow-x: auto; 
+        scrollbar-width: none; 
+        -webkit-overflow-scrolling: touch;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    
+    .tab-btn { 
+        flex: 1; 
+        padding: 11px 12px; 
+        border: none; 
+        background: transparent; 
+        color: #475569; 
+        font-weight: 700; 
+        font-size: 12px; 
+        cursor: pointer; 
+        border-radius: 10px; 
+        transition: 0.2s; 
+        white-space: nowrap; 
+    }
     .tab-btn:hover { color: #0f172a; }
     .tab-btn.active { background: #ffffff; color: #1a73e8; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
 
@@ -45,6 +84,10 @@
     .group select option { color: #0f172a; background: #fff; }
     .group select optgroup { font-weight: 700; color: #1a73e8; background: #e2e8f0; }
 
+    /* Cấu trúc quản lý lưới phản hồi di động gọn gàng */
+    .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-custom-col { display: grid; grid-template-columns: 1.4fr 1fr; gap: 12px; }
+
     .password-container { position: relative; width: 100%; }
     .password-container input { padding-right: 45px !important; }
     .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #475569; z-index: 10; font-size: 16px; transition: 0.2s; }
@@ -55,9 +98,12 @@
     .helper-links a:hover { color: #1a73e8; text-decoration: underline; }
 
     .consent-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; background: #f1f5f9; padding: 14px; border-radius: 12px; border: 1px dashed #94a3b8; text-align: left; }
-    .consent-group input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; cursor: pointer; accent-color: #1a73e8; }
-    .consent-group label { font-size: 13px; line-height: 1.5; color: #334155; font-weight: 600; cursor: pointer; user-select: none; }
+    .consent-group input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; margin-top: 2px; flex-shrink: 0; }
+    .privacy-label-text { display: block; font-size: 13px; font-weight: 600; color: #334155; line-height: 1.4; user-select: none; cursor: pointer; }
 
+    .btn-submit { width: 100%; padding: 14px; border: none; border-radius: 50px; background: #1a73e8; color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15); display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .btn-submit:hover { background: #155cb4; transform: translateY(-1px); box-shadow: 0 6px 15px rgba(26,115,232,0.3); }
+    
     .btn { width: 100%; padding: 14px; background: #1a73e8; border: none; border-radius: 12px; font-size: 15px; font-weight: bold; color: white; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(26,115,232,0.2); text-transform: uppercase; letter-spacing: 0.5px; }
     .btn:hover { background: #155cb4; transform: translateY(-1px); box-shadow: 0 6px 15px rgba(26,115,232,0.3); }
     .btn:active { transform: translateY(0); }
@@ -71,8 +117,8 @@
     .btn-switch { margin-top: 14px; background: #e2e8f0; color: #334155; border: 1px solid #94a3b8; box-shadow: none; }
     .btn-switch:hover { background: #cbd5e1; color: #0f172a; box-shadow: none; }
 
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-    .modal-content { background: #ffffff; width: 100%; max-width: 420px; padding: 30px; border-radius: 24px; border: 1px solid #cbd5e1; color: #0f172a; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); transform: translateY(-20px); transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; }
+    .modal-content { background: #ffffff; width: 100%; max-width: 420px; padding: 30px; border-radius: 24px; border: 1px solid #cbd5e1; color: #0f172a; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); transform: translateY(-10px); transition: 0.3s ease; }
     .modal-header { font-size: 18px; font-weight: 800; margin-bottom: 20px; text-align: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 12px; color: #0f172a; letter-spacing: -0.3px; }
     .modal-footer { display: flex; gap: 10px; margin-top: 20px; }
     .btn-secondary { background: #e2e8f0; color: #475569; box-shadow: none; }
@@ -82,6 +128,27 @@
     .info-banner { display: none; color: #b45309; font-size: 13px; font-weight: 700; margin-bottom: 15px; background: #fef3c7; padding: 12px; border-radius: 12px; border: 1px solid #fcd34d; text-align: left; line-height: 1.5; }
 
     ::placeholder { color: #64748b; font-weight: 600; }
+
+    /* 📱 BỘ ĐIỀU CHỈNH GIAO DIỆN DI ĐỘNG KHẨN CẤP (RESPONSIVE MEDIA QUERIES) */
+    @media (max-width: 480px) {
+        body { padding: 12px; }
+        .box { padding: 28px 20px; border-radius: 20px; }
+        h2 { font-size: 18px; margin-bottom: 20px; }
+        .tabs { margin-bottom: 20px; border-radius: 12px; }
+        .tab-btn { font-size: 11px; padding: 10px 8px; }
+        .group { margin-bottom: 14px; }
+        .group label { font-size: 12px; margin-bottom: 4px; }
+        .group input, .group select { padding: 10px 14px; font-size: 14px; border-radius: 10px; }
+        
+        /* Chuyển đổi lưới ô nhập liệu đăng ký song song thành hàng dọc để tăng diện tích thao tác bấm ngón tay */
+        .grid-2-col, .grid-custom-col { grid-template-columns: 1fr; gap: 14px; }
+        
+        .btn, .btn-submit, .btn-zalo { padding: 12px; font-size: 14px; border-radius: 10px; }
+        .consent-group { padding: 10px; margin: 15px 0; }
+        .helper-links { margin: -2px 0 18px 0; gap: 8px; }
+        .helper-links a { font-size: 11.5px; }
+        .modal-content { padding: 22px 18px; border-radius: 20px; }
+    }
 </style>
 </head>
 <body>
@@ -144,6 +211,10 @@
             </div>
         </div>
 
+        <div class="helper-links">
+            <a onclick="openModal('forgotIdModal')"><i class="fa-solid fa-magnifying-glass"></i> Chưa biết hoặc Quên mã ID của con?</a>
+        </div>
+
         <div id="parentInfoBanner" class="info-banner">
             ℹ️ Nếu chưa biết được hoặc quên mật khẩu học sinh, phụ huynh có thể nhấn vào ô hỗ trợ Zalo ở dưới để được tư vấn.
         </div>
@@ -202,7 +273,7 @@
             </select>
         </div>
         
-        <div class="group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="group grid-2-col">
             <div>
                 <label>Tuổi</label>
                 <input type="number" id="age" placeholder="Từ 11-15 tuổi">
@@ -213,10 +284,10 @@
             </div>
         </div>
         
-        <div class="group" style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px;">
+        <div class="group grid-custom-col">
             <div>
                 <label>Tên Trường</label>
-                <input type="text" id="school" placeholder="THCS Nguyễn Khuyến">
+                <input type="text" id="school" placeholder="THCS & THPT Nguyễn Khuyến">
             </div>
             <div>
                 <label>Giới tính</label>
@@ -250,7 +321,7 @@
 
         <div class="consent-group">
             <input type="checkbox" id="consent">
-            <label for="consent">Tôi xác nhận hoàn toàn tự nguyện tham gia đợt khảo sát sàng lọc nhận thức và cam kết tập trung hoàn thành các bài kiểm tra.</label>
+            <label for="consent" class="privacy-label-text">Tôi xác nhận hoàn toàn tự nguyện tham gia đợt khảo sát sàng lọc nhận thức và cam kết tập trung hoàn thành các bài kiểm tra.</label>
         </div>
         
         <button class="btn" onclick="startSurvey()">Bắt đầu làm bài</button>
@@ -280,7 +351,7 @@
         </div>
         <div class="group">
             <label>Tên Trường</label>
-            <input type="text" id="findIdSchool" placeholder="Ví dụ: THCS Nguyễn Khuyến">
+            <input type="text" id="findIdSchool" placeholder="Ví dụ: THCS & Nguyễn Khuyến">
         </div>
         <div class="group">
             <label>Khối Lớp</label>
@@ -445,7 +516,6 @@
         window.switchTab('login');
     }
 
-    // --- LOGIC XỬ LÝ LOCKOUT HỌC SINH ---
     window.checkLockoutStatus = function() {
         let inputId = document.getElementById("loginId").value.trim().toUpperCase();
         let btn = document.getElementById("btnLoginStudent");
@@ -484,13 +554,13 @@
         lockData.attempts += 1;
         
         if (lockData.attempts >= 4) {
-            lockData.lockUntil = Date.now() + 5 * 60 * 1000; // Khóa 5 phút
+            lockData.lockUntil = Date.now() + 5 * 60 * 1000;
             localStorage.setItem("lock_student_" + id, JSON.stringify(lockData));
             window.checkLockoutStatus();
             alert("❌ Em đã nhập sai mã số hoặc mật khẩu quá 4 lần! Hệ thống tự động khóa đăng nhập 5 phút. Hãy liên hệ Admin qua Zalo bên dưới.");
         } else {
             localStorage.setItem("lock_student_" + id, JSON.stringify(lockData));
-            alert(`❌ Thông tin đăng nhập chưa chính xác. Em còn ${4 - lockData.attempts} lần thử thử trước khi bị khóa.`);
+            alert(`❌ Thông tin đăng nhập chưa chính xác. Em còn ${4 - lockData.attempts} lần thử trước khi bị khóa.`);
         }
     }
 
@@ -503,7 +573,6 @@
             return;
         }
 
-        // Kiểm tra vòng bảo vệ lockout lỗi 4 lần tại máy cục bộ (Giữ nguyên gốc)
         let lockData = JSON.parse(localStorage.getItem("lock_student_" + inputId)) || { attempts: 0, lockUntil: 0 };
         if (lockData.lockUntil > Date.now()) {
             window.checkLockoutStatus();
@@ -515,17 +584,13 @@
         get(child(ref(db), `users/${inputId}`)).then((snapshot) => {
             if (snapshot.exists()) {
                 let matchedUser = snapshot.val();
-                
-                // 🔴 ĐOẠN KIỂM TRA MỚI: Nếu tài khoản bị Admin khóa trên Firebase
                 let banUntil = matchedUser.banUntil || null;
                 
                 if (banUntil === "permanent") {
                     alert("❌ TÀI KHOẢN BỊ KHÓA VĨNH VIỄN: Tài khoản của em đã bị Ban Giám Hiệu khóa vĩnh viễn trên hệ thống. Vui lòng liên hệ trực tiếp thầy cô để xử lý lỗi vi phạm!");
-                    return; // Chặn đứng đăng nhập
+                    return;
                 } else if (banUntil && parseInt(banUntil) > Date.now()) {
                     let timeLeftMs = parseInt(banUntil) - Date.now();
-                    
-                    // Quy đổi mili giây còn lại thành ngôn ngữ tiếng Việt dễ đọc
                     let timeRemainingStr = "";
                     if (timeLeftMs > 24 * 60 * 60 * 1000) {
                         timeRemainingStr = Math.ceil(timeLeftMs / (24 * 60 * 60 * 1000)) + " ngày";
@@ -538,16 +603,14 @@
                     }
 
                     alert(`❌ TRẠNG THÁI BỊ KHÓA: Tài khoản của em đang phải chịu hình phạt tạm ngưng làm bài test. Em vui lòng quay lại sau [${timeRemainingStr}] nữa hệ thống sẽ tự động mở khóa nhé!`);
-                    return; // Chặn đứng đăng nhập
+                    return;
                 }
 
-                // Nếu không bị khóa, tiến hành kiểm tra mật khẩu như bình thường
                 if(matchedUser.password !== hashedInputPwd) {
                     recordStudentFailure(inputId);
                     return;
                 }
                 
-                // Đăng nhập thành công -> Xóa dấu vết đếm sai cũ
                 localStorage.removeItem("lock_student_" + inputId);
                 matchedUser.loginTime = new Date().toLocaleString("vi-VN");
                 matchedUser.role = "student";
@@ -562,7 +625,6 @@
         });
     }
 
-    // --- LOGIC XỬ LÝ LOCKOUT PHỤ HUYNH ---
     window.checkParentStatus = function() {
         let inputId = document.getElementById("parentLoginId").value.trim().toUpperCase();
         let infoBanner = document.getElementById("parentInfoBanner");
@@ -618,7 +680,6 @@
                     return;
                 }
                 
-                // Thành công
                 localStorage.removeItem("lock_parent_" + inputId);
                 let parentUser = {
                     ...matchedUser,
@@ -735,7 +796,7 @@
         let fClass = document.getElementById("findIdClass").value.trim();
 
         if(fName === "" || fSchool === "" || fClass === "") {
-            alert("⚠️ Vui lòng nhập đủ Họ tên, Trường và Khối lớp!");
+            alert("⚠️ Vui lòng nhập đủ Họ tên, Trường và Khối lớp của học sinh!");
             return;
         }
 
@@ -744,11 +805,14 @@
                 let users = Object.values(snapshot.val());
                 let match = users.find(u => u.name.toLowerCase() === fName && u.school.toLowerCase() === fSchool && u.class === fClass);
                 if(match) {
-                    alert(`✅ Hệ thống đám mây tìm thấy ID của bạn!\n👉 Mã số ID: ${match.id}`);
+                    alert(`✅ Hệ thống đám mây tìm thấy ID thành công!\n👉 Mã số ID Học sinh: ${match.id}\n👉 Mã số ID Phụ huynh: PH_${match.id}`);
+                    
                     document.getElementById("loginId").value = match.id;
+                    document.getElementById("parentLoginId").value = "PH_" + match.id;
+                    
                     window.closeModal('forgotIdModal');
                 } else {
-                    alert("❌ Không tìm thấy ID của bạn, vui lòng kiểm tra lại thông tin trên");
+                    alert("❌ Không tìm thấy thông tin học sinh trên hệ thống, vui lòng kiểm tra lại chính xác từng từ.");
                 }
             }
         });
@@ -822,7 +886,6 @@
         });
     }
 
-    // Cơ chế chạy nền tự động tính toán thời gian giải phóng Khóa bảo vệ (Không cần ép người dùng gõ phím)
     setInterval(() => {
         window.checkLockoutStatus();
     }, 1000);
