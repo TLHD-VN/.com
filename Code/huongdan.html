@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng Dẫn Sử Dụng - Hệ Thống Sàng Lọc Nhận Thức</title>
+    <link rel="icon" type="image/x-icon" href="icon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --student-color: #4f46e5;
+            --parent-color: #6c5ce7;
+            --teacher-color: #0d9488;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            min-height: 100vh;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(-45deg, #ff7675, #74b9ff, #a29bfe, #fdcb6e, #55efc4);
+            background-size: 400% 400%;
+            animation: bgmove 15s ease infinite;
+        }
+
+        @keyframes bgmove {
+            0% { background-position: 0% 50%; }
+            55% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .guide-container {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .header-section {
+            border-bottom: 2px dashed #e2e8f0;
+            padding-bottom: 25px;
+            margin-bottom: 30px;
+        }
+
+        .header-section h1 {
+            color: var(--text-main);
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-section p {
+            color: var(--text-sub);
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        .tabs-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 50px;
+            border: 1px solid #e2e8f0;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-sub);
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover { color: var(--text-main); }
+        
+        .tab-btn[data-role="student"].active { background: var(--student-color); color: white; box-shadow: 0 4px 12px rgba(79,70,229,0.25); }
+        .tab-btn[data-role="parent"].active { background: var(--parent-color); color: white; box-shadow: 0 4px 12px rgba(108,92,231,0.25); }
+        .tab-btn[data-role="teacher"].active { background: var(--teacher-color); color: white; box-shadow: 0 4px 12px rgba(13,148,136,0.25); }
+
+        .tab-content { display: none; text-align: left; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Style elements inside content */
+        h2 { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        p.intro { font-size: 14.5px; color: #334155; line-height: 1.6; margin-bottom: 20px; }
+        
+        .step-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.01);
+        }
+        .step-title { font-weight: 700; color: var(--text-main); font-size: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .step-desc { font-size: 13.5px; color: #475569; line-height: 1.6; padding-left: 22px; }
+        .step-desc ul { margin-left: 18px; margin-top: 6px; }
+        .step-desc li { margin-bottom: 4px; }
+
+        .note-alert {
+            background: #fffbeb;
+            border-left: 5px solid #d97706;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 13.5px;
+            color: #b45309;
+            line-height: 1.6;
+        }
+
+        .footer-actions { margin-top: 30px; display: flex; justify-content: center; gap: 12px; }
+        .btn-home { padding: 12px 24px; font-size: 14px; font-weight: bold; color: #475569; background-color: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 50px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-home:hover { background-color: #e2e8f0; color: #1e293b; }
+
+        @media (max-width: 600px) {
+            .tabs-nav { flex-direction: column; border-radius: 16px; padding: 10px; }
+            .tab-btn { padding: 10px; }
+            .guide-container { padding: 20px 15px; }
+            .step-desc { padding-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="guide-container">
+    <div class="header-section">
+        <h1><i class="fa-solid fa-book-open" style="color:var(--primary-color); margin-right:6px;"></i> Hướng Dẫn Sử Dụng Hệ Thống</h1>
+        <p>Cẩm nang rèn luyện và giám sát chỉ số nhận thức - tâm lý học đường dành cho các thành viên</p>
+    </div>
+
+    <div class="tabs-nav">
+        <button class="tab-btn active" data-role="student"><i class="fa-solid fa-user-graduate"></i> Học Sinh</button>
+        <button class="tab-btn" data-role="parent"><i class="fa-solid fa-user-tie"></i> Phụ Huynh</button>
+        <button class="tab-btn" data-role="teacher"><i class="fa-solid fa-user-shield"></i> Giáo Viên & Admin</button>
+    </div>
+
+    <div class="tab-content active" id="content-student">
+        <h2><i class="fa-solid fa-brain" style="color:var(--student-color);"></i> Hướng dẫn dành cho Học sinh</h2>
+        <p class="intro">Hệ thống giúp các em tự đo lường tốc độ tư duy, khả năng ghi nhớ ngắn hạn và mức độ linh hoạt của não bộ thông qua các bài kiểm tra được thiết kế dưới dạng trò chơi thú vị.</p>
+        
+        <div class="step-box">
+            <div class="step-title">1️⃣ Bước 1: Đăng nhập hệ thống</div>
+            <div class="step-desc">Sử dụng tài khoản Học sinh (Mã số ID và mật khẩu) do Nhà trường cấp để đăng nhập từ trang chủ.</div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">2️⃣ Bước 2: Lựa chọn bài đo lường rèn luyện</div>
+            <div class="step-desc">
+                Tại giao diện **Trang chủ (`trangchu.html`)**, các em có thể tự do chọn lựa các bài kiểm tra thành phần:
+                <ul>
+                    <li><b>Memory Matching (Trí nhớ):</b> Tìm các cặp hình tương đồng giống nhau.</li>
+                    <li><b>Stop The Game (Kiểm soát phản xạ):</b> Nhấn phím nhanh khi thấy xe chạy/mèo con 🚗 và nhịn bấm tuyệt đối khi thấy biển dừng/hổ dữ 🛑.</li>
+                    <li><b>N-Back Task (Trí nhớ làm việc):</b> So sánh biểu tượng hiện tại với biểu tượng xuất hiện ngay trước đó.</li>
+                    <li><b>Trail Making Test (Tốc độ xử lý):</b> Kết nối nhanh các chuỗi số và ký tự theo đúng thứ tự khoa học.</li>
+					<li><b>Flexibility Test(Mức độ linh hoạt):</b>Phân loại hình ảnh thật nhanh theo đúng QUY TẮC hiển thị trên màn hình</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">3️⃣ Bước 3: Xem thành tích cá nhân</div>
+            <div class="step-desc">Sau khi hoàn thành, hệ thống hiển thị Độ chính xác (%), Thời gian phản xạ trung bình và lưu dữ liệu tối ưu nhất lên Bảng xếp hạng trực tuyến để thi đua lành mạnh cùng bạn bè.</div>
+        </div>
+
+        <div class="note-alert">
+            <i class="fa-solid fa-triangle-exclamation"></i> <b>Cơ chế tự bảo vệ nhận thức (Stress Shield):</b> 
+            Nếu trong quá trình làm bài, các em thao tác sai liên tục (quá 20 lần ở bài Memory hoặc vượt quá 50% số lỗi ở bài Stop Game), hệ thống sẽ chủ động kích hoạt chế độ khóa tạm dừng để nhắc nhở sức khỏe. Lúc này, các em hãy thực hiện theo bài tập điều hòa nhịp thở 4-7-8 hiển thị trên màn hình trước khi tiếp tục trò chơi.
+        </div>
+    </div>
+
+    <div class="tab-content" id="content-parent">
+        <h2><i class="fa-solid fa-chart-line" style="color:var(--parent-color);"></i> Hướng dẫn dành cho Phụ huynh</h2>
+        <p class="intro">Công cụ đồng hành giúp Cha mẹ nắm bắt sát sao diễn biến tâm lý, mức độ tập trung và trạng thái căng thẳng thần kinh của con trong suốt học kỳ.</p>
+        
+        <div class="step-box">
+            <div class="step-title">1️⃣ Bước 1: Truy cập bằng mã liên kết</div>
+            <div class="step-desc">Phụ huynh đăng nhập bằng **Mã Phụ Huynh (Parent Login ID)** gắn liền với mã học sinh của con mình để đảm bảo tính bảo mật thông tin.</div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">2️⃣ Bước 2: Đọc hiểu biểu đồ tại Trung tâm phân tích</div>
+            <div class="step-desc">
+                Hệ thống tự động chuyển đến **Trung tâm phân tích (`thongke.html`)** với giao diện trực quan:
+                <ul>
+                    <li><b>Quỹ đạo độ chính xác (Line Chart):</b> Cho biết tiến trình tiến bộ hoặc suy giảm phong độ tập trung của con qua từng ngày.</li>
+                    <li><b>Mức độ nguy cơ bốc đồng & stress:</b> Được phân loại khoa học theo 3 mức (Thấp - Trung bình - Cao) để cảnh báo sớm tình trạng mệt mỏi nhận thức do áp lực học tập quá tải.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">3️⃣ Bước 3: Trích xuất báo cáo tham vấn</div>
+            <div class="step-desc">Phụ huynh nhấn nút <b>"Xuất Báo Cáo PDF"</b> để tải về hồ sơ bản mềm. Bản báo cáo có đầy đủ thông tin định danh và số liệu định lượng chuẩn xác dùng để phối hợp trao đổi với bộ phận Tham vấn tâm lý học đường của nhà trường khi cần thiết.</div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="content-teacher">
+        <h2><i class="fa-solid fa-user-shield" style="color:var(--teacher-color);"></i> Hướng dẫn dành cho Giáo viên & Ban giám hiệu</h2>
+        <p class="intro">Giải pháp hỗ trợ đắc lực cho công tác Chuyển đổi số quản trị và phát hiện sớm các nguy cơ tâm lý học đường toàn diện cấp trường.</p>
+        
+        <div class="step-box">
+            <div class="step-title">1️⃣ Bước 1: Quản lý thông tin học sinh (`admin_truong.html`)</div>
+            <div class="step-desc">Giáo viên chủ nhiệm và cán bộ quản lý có quyền theo dõi danh sách toàn trường hoặc lọc theo từng lớp. Thầy/Cô có thể tra cứu nhanh hồ sơ, quản lý tài khoản và phê duyệt phân quyền cho phụ huynh học sinh.</div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">2️⃣ Bước 2: Sàng lọc học sinh có chỉ số cảnh báo Cao</div>
+            <div class="step-desc">
+                Thông qua dữ liệu đồng bộ đám mây **Cloud Firebase**, bộ lọc thông minh sẽ tự động khoanh vùng những học sinh có:
+                <ul>
+                    <li><b>Chỉ số TRI (Chỉ số Nguy cơ Nhận thức tổng hợp)</b> ở mức báo động đỏ.</li>
+                    <li>Tần suất ván chơi bị hệ thống tự ngắt do quá tải (Stress Reject) diễn ra thường xuyên.</li>
+                </ul>
+                Từ đó, giáo viên chủ nhiệm và chuyên viên tâm lý có thể chủ động tiếp cận, trò chuyện và can thiệp kịp thời hỗ trợ các em.
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">3️⃣ Bước 3: Kết xuất dữ liệu báo cáo chuyên môn</div>
+            <div class="step-desc">Hệ thống hỗ trợ xuất toàn bộ bảng điểm, lịch sử rèn luyện đa nhiệm của học sinh ra file Excel hoặc PDF cấp cao (`admin.html`) phục vụ cho các buổi họp chuyên môn, báo cáo sơ kết học kỳ tổng hợp.</div>
+        </div>
+    </div>
+
+    <div class="footer-actions">
+        <a href="trangchu.html" class="btn-home"><i class="fa-solid fa-house"></i> Quay lại trang chủ phần mềm</a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Xóa trạng thái active cũ trên nút tab
+                tabs.forEach(t => t.classList.remove('active'));
+                // Ẩn tất cả nội dung tab
+                contents.forEach(c => c.classList.remove('active'));
+
+                // Kích hoạt tab hiện tại
+                tab.classList.add('active');
+                
+                // Hiển thị nội dung tương ứng dựa trên thuộc tính data-role
+                const role = tab.getAttribute('data-role');
+                document.getElementById(`content-${role}`).classList.add('active');
+            });
+        });
+    });
+</script>
+</body>
+</html>
