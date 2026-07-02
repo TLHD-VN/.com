@@ -52,11 +52,14 @@ app.post('/api/ai-chat', async (req, res) => {
     }
 });
 
-// KÍCH HOẠT CỔNG CHẠY SERVER
+// KÍCH HOẠT CỔNG CHẠY SERVER (Chạy ở Localhost máy tính)
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`====================================================`);
-    console.log(`🚀 SERVER WEB TRUNG GIAN DÙNG AI MIỄN PHÍ ĐÃ SẴN SÀNG!`);
-    console.log(`👉 Link chạy ứng dụng: http://localhost:${PORT}/Code/trangchu.html`);
+    console.log(`🚀 SERVER WEB ĐANG KHỞI CHẠY THÀNH CÔNG...`);
+    console.log(`📡 Lắng nghe dữ liệu tại cổng: http://localhost:${PORT}`);
     console.log(`====================================================`);
 });
+
+// 🔥 KẾT NỐI VỚI VERCEL CLOUD: Xuất đối tượng ứng dụng để Vercel bọc thành Serverless Function
+module.exports = app;
