@@ -1,7 +1,5 @@
-{
-  "dependencies": {
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "openai": "^6.45.0"
-  }
+"dependencies": {
+   "express": "^4.19.2",
+   "dotenv": "^16.4.5",
+   "openai": "^4.52.0"
 }
