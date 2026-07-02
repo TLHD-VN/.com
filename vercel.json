@@ -1,13 +1,15 @@
 {
-  "functions": {
-    "server.js": {
-      "runtime": "@vercel/node"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/ai-chat",
-      "destination": "/server.js"
-    }
+  "version": 2,
+  "builds": [
+    { "src": "server.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "Code/*", "use": "@vercel/static" },
+    { "src": "admin.json", "use": "@vercel/static" },
+    { "src": "vietnamese-font.js", "use": "@vercel/static" },
+    { "src": "icon.ico", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/ai-chat", "dest": "server.js" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
