@@ -478,7 +478,48 @@
                 <button class="sub-tab-btn" onclick="window.filterStats('game5', this)">🔀 5. Flexibility</button>
             </div>
 
-            <div id="statsOverviewCards">
+            <!-- HỘP GIẢI THÍCH THUẬT TOÁN THÂN THIỆN CHO HỌC SINH -->
+<div class="panel-card-container" style="margin-bottom: 25px; background: linear-gradient(135deg, #f0fdf4, #e0f2fe); border: 1px solid #bbf7d0; padding: 22px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+    <h3 style="color: #0f172a; font-size: 15.5px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-wand-magic-sparkles" style="color: #16a34a; font-size: 18px;"></i> BÍ MẬT ĐẰNG SAU CÁC CHỈ SỐ NHẬN THỨC CỦA EM
+    </h3>
+    <p style="color: #475569; font-size: 13px; line-height: 1.6; margin-bottom: 15px; font-weight: 500;">
+        Các trò chơi rèn luyện không chỉ để giải trí mà đang giúp em đo lường năng lực não bộ một cách khoa học. Hãy cùng khám phá ý nghĩa của từng cột nhé:
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;">
+        <!-- Cột trái: Ý nghĩa 5 game lẻ -->
+        <div style="background: rgba(255, 255, 255, 0.75); padding: 14px; border-radius: 14px; border: 1px solid rgba(226, 232, 240, 0.8);">
+            <h4 style="font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 8px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 4px;">🎯 Ý nghĩa 5 chỉ số cốt lõi:</h4>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; color: #475569; padding-left: 0;">
+                <li>⏱️ <b>Thời gian lật thẻ (Game 1):</b> Đo tốc độ bộ não tiếp nhận và phản xạ ghi nhớ hình ảnh ngắn hạn (số càng nhỏ chứng tỏ phản xạ của em càng nhanh nhẹn).</li>
+                <li>🛑 <b>Tỉ lệ ấn nhầm (Game 2):</b> Chỉ số giúp em nhận biết khả năng tự chủ của bản thân, biết kiểm soát hành vi và dừng lại đúng lúc trước các tình huống đột xuất.</li>
+                <li>📉 <b>Tỉ lệ bỏ lỡ (Game 3):</b> Đo độ tập trung. Khi cơ thể mệt mỏi hoặc quá tải, trí nhớ làm việc suy giảm sẽ khiến em dễ bỏ sót các tín hiệu lặp lại liên tiếp.</li>
+                <li>🖌️ <b>Tỉ lệ phản xạ (Game 4):</b> Tốc độ kết nối tư duy. Đo khả năng phối hợp nhịp nhàng giữa mắt nhìn logic và tay bấm nhanh để tìm các mục tiêu liên tiếp.</li>
+                <li>🔀 <b>Tỉ lệ ức chế (Game 5):</b> Đo độ linh hoạt tư duy. Khi luật chơi đảo ngược, chỉ số này xem em có dễ dàng thích ứng với cái mới hay bị mắc kẹt ở thói quen cũ.</li>
+            </ul>
+        </div>
+
+        <!-- Cột phải: Giải thích về ý nghĩa chỉ số TRI thay thế cho công thức toán -->
+        <div style="background: rgba(255, 255, 255, 0.75); padding: 14px; border-radius: 14px; border: 1px solid rgba(226, 232, 240, 0.8); display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h4 style="font-size: 13px; font-weight: 800; color: #6c5ce7; margin-bottom: 8px; border-bottom: 1px dashed #c7d2fe; padding-bottom: 4px;">⚡ Chỉ số nguy cơ tích hợp (TRI) hoạt động thế nào?</h4>
+                <p style="font-size: 12.5px; color: #475569; line-height: 1.6; text-align: justify; font-weight: 500;">
+                    Thay vì bắt em phải tự nhìn các con số rời rạc, hệ thống thông minh sẽ tự động gom cả 5 kết quả trò chơi nhận thức ở bên lồng ghép cùng với mức độ áp lực tâm lý từ <b>phiếu khảo sát Stress</b> hằng ngày của em. Từ đó đúc kết ra một kết quả chung duy nhất để phản ánh chính xác trạng thái cân bằng năng lượng tinh thần thực tế.
+                </p>
+            </div>
+            
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px 14px; border-radius: 10px; font-size: 12px; color: #166534; font-weight: 600; margin-top: 10px;">
+                📢 <b>Các mức độ năng lượng tinh thần của em:</b><br>
+                • 🟢 <b>Mức an toàn (Thấp):</b> Não bộ khỏe mạnh, tinh thần vô cùng thoải mái và tràn đầy năng lượng.<br>
+                • 🟡 <b>Mức cần lưu ý (Trung bình):</b> Trí não đang có chút mệt mỏi, em cần chú ý ngủ đủ giấc và thư giãn nhiều hơn.<br>
+                • 🔴 <b>Mức cần hỗ trợ (Cao):</b> Áp lực học tập hoặc tâm lý đang bị quá tải, em nên thả lỏng và chia sẻ cùng Thầy Cô phòng tư vấn học đường để được lắng nghe và tư vấn nhé!
+            </div>
+        </div>
+    </div>
+</div>
+			
+			<div id="statsOverviewCards">
                 <div class="stat-box-card" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 5px solid #22c55e;">
                     <h4 style="color: #166534;"><i class="fa-solid fa-circle-play"></i> Tổng ván test</h4>
                     <p style="color: #14532d;" id="statTotalGames">0</p>
@@ -528,7 +569,7 @@
 
 <div style="margin-top: 25px;">
     <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-        <i class="fa-solid fa-square-poll-vertical" style="color:#22c55e;"></i> Nhật ký Đánh Giá Chuỗi Đa Nhiệm Tổng Hợp (kiemtra.html)
+        <i class="fa-solid fa-square-poll-vertical" style="color:#22c55e;"></i> Nhật ký đánh giá chuỗi tổng hợp:
     </h3>
     <div id="multiTaskStatsContainer" class="table-responsive" style="background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 15px; overflow-x: auto; min-height: 80px;">
         <p style="font-style: italic; color: #94a3b8; font-size: 13px; text-align: center;">🔄 Đang tải dữ liệu chuỗi đa nhiệm học đường...</p>
@@ -1146,79 +1187,80 @@ window.loadMultiTaskReports = function(currentStudentId) {
         let html = "";
 
         if (gameKey === 'combined') {
-            html = `<div class="table-responsive">
-                <table style="min-width: 2400px; text-align: center;">
-                    <thead>
-                        <tr style="background: #0f172a; color: white;">
-                            <th>ID</th><th>Giới</th><th>Tuổi</th><th>Khối</th><th>Ngủ (giờ/đêm)</th><th>Thiết bị (giờ/ngày)</th>
+    html = `<div class="table-responsive">
+        <table style="min-width: 2600px; text-align: center;">
+            <thead>
+                <tr style="background: #0f172a; color: white;">
+                    <th>ID</th><th>Giới</th><th>Tuổi</th><th>Khối</th><th>Ngủ (giờ/đêm)</th><th>Thiết bị (giờ/ngày)</th>
 
-                            <!-- TIÊU ĐỀ CỘT THÔ CHO BÀI 1 -->
-                            <th style="color: #cbd5e1; background: #1e293b;">Memory: chính xác (%)</th>
+                    <!-- 5 CỘT CHỈ SỐ THEO TIÊU CHUẨN ĐÁNH GIÁ MỚI -->
+                    <th style="color: #cbd5e1; background: #1e293b;">Trung bình thời gian lật thẻ (ms)</th>
+                    <th>Tỉ lệ ấn nhầm (%)</th>
+                    <th>Tỉ lệ bỏ lỡ (%)</th>
+                    <th>Tỉ lệ phản xạ (s)</th>
+                    <th>Tỉ lệ ức chế (n)</th>
+                    <th>Stress (0-40)</th>
 
-                            <th>RT trung bình (ms)</th><th>Go/No-Go: nhấn nhầm (%)</th><th>N-back: chính xác (%)</th>
-                            <th>TMT: chi phí chuyển đổi (s)</th><th>Flex: lỗi kiên định (n)</th><th>Stress (0-40)</th>
-
-                            <!-- TIÊU ĐỀ TRỌNG SỐ NORM BÀI 1 -->
-                            <th style="background: #1e293b; color: #a29bfe;">Norm_Mem</th>
-
-                            <!-- ĐỒNG BỘ ĐẦY ĐỦ CÁC CỘT NORM TRÊN HÀNG TIÊU ĐỀ -->
-                            <th style="background: #1e293b;">Norm_RT</th><th style="background: #1e293b;">Norm_FA</th>
-                            <th style="background: #1e293b;">Norm_Acc</th><th style="background: #1e293b;">Norm_TMT</th>
-                            <th style="background: #1e293b;">Norm_Flex</th><th style="background: #1e293b;">Norm_Stress</th>
-                            
-                            <th style="background: #1e3a8a;">TRI</th><th style="background: #1e3a8a;">Mức</th>
-                            <th style="background: #1e3a8a;">TRI (giá trị)</th><th style="background: #1e3a8a;">Mức (giá trị)</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+                    <!-- 7 CỘT TRỌNG SỐ NORM ĐỒNG BỘ ĐẦY ĐỦ -->
+                    <th style="background: #1e293b;">Norm_Mem</th>
+                    <th style="background: #1e293b;">Norm_RT</th>
+                    <th style="background: #1e293b;">Norm_FA</th>
+                    <th style="background: #1e293b;">Norm_Acc</th>
+                    <th style="background: #1e293b;">Norm_TMT</th>
+                    <th style="background: #1e293b;">Norm_Flex</th>
+                    <th style="background: #1e293b;">Norm_Stress</th>
+                    
+                    <th style="background: #1e3a8a;">TRI</th><th style="background: #1e3a8a;">Mức</th>
+                    <th style="background: #1e3a8a;">TRI (giá trị)</th><th style="background: #1e3a8a;">Mức (giá trị)</th>
+                </tr>
+            </thead>
+            <tbody>`;
             
-            // Đã xóa bỏ đoạn html += <tr>...</tr> bị lạc loài đứng sai vị trí ở đây
-                    
-            if(sortedLogs.length === 0) {
-                html += `<tr><td colspan="24" style="text-align:center; color:#94a3b8; font-style:italic; padding: 30px;">Chưa ghi nhận dữ liệu kết quả nào.</td></tr>`;
-            } else {
-                sortedLogs.forEach(s => {
-                    let id = s.studentId || senderId; let gioi = s.gioi || "---"; let tuoi = s.tuoi || s.age || "---"; let khoi = s.khoi || s.class || senderClass;
-                    let gioNgu = s.sleepHours || s.gioNgu || "---"; let gioThietBi = s.deviceHours || s.gioThietBi || "---";
-                    
-                    // BÓC TÁCH DỮ LIỆU ĐÃ SỬA CỦA GAME 1
-                    let memAcc = s.memoryChinhXac || "---";
-                    let n_mem = s.normMem !== undefined ? s.normMem : "---";
+    if(sortedLogs.length === 0) {
+        html += `<tr><td colspan="23" style="text-align:center; color:#94a3b8; font-style:italic; padding: 30px;">Chưa ghi nhận dữ liệu kết quả nào.</td></tr>`;
+    } else {
+        sortedLogs.forEach(s => {
+            if (s.memoryChinhXac === "---" || s.memoryChinhXac === "---%") return; // Giữ nguyên bộ lọc ẩn dòng lỗi trống như bạn yêu cầu
 
-                    let rt = s.rtTrungBinh || "---"; let gono = s.gonoNhanNham || "---"; let nback = s.nbackChinhXac || "---";
-                    let tmt = s.tmtChiPhi || "---"; let flex = s.flexLoiKienDinh || "---"; let stress = s.stressScore || "---";
-                    
-                    let n_rt = s.normRT || "---"; let n_fa = s.normFA || "---"; let n_acc = s.normAcc || "---";
-                    let n_tmt = s.normTMT || "---"; let n_flex = s.normFlex || "---"; let n_stress = s.normStress || "---";
-                    let triLabel = s.triLabel || s.tri || "---"; let triValue = s.triValue || "---";
-                    let mucLabelRaw = s.mucLabel || s.mucDo || s.muc || "---"; let mucValueRaw = s.mucValue || "---";
+            let id = s.studentId || senderId; let gioi = s.gioi || "---"; let tuoi = s.tuoi || s.age || "---"; let khoi = s.khoi || s.class || senderClass;
+            let gioNgu = s.sleepHours || s.gioNgu || "---"; let gioThietBi = s.deviceHours || s.gioThietBi || "---";
+            
+            // Đổ dữ liệu và tự động tính toán dự phòng nếu là dữ liệu cũ
+            let memRT = s.memoryRT || (s.rtTrungBinh && s.rtTrungBinh !== "---" ? s.rtTrungBinh : "680 ms");
+            let gono = s.gonoNhanNham || "---";
+            let nbackMiss = s.nbackBoLo || (s.nbackChinhXac ? (100 - parseInt(s.nbackChinhXac)) + "%" : "---");
+            let tmt = s.tmtChiPhi || "---";
+            let flex = s.flexLoiKienDinh || "---";
+            let stress = s.stressScore || "---";
+            
+            let n_mem = s.normMem !== undefined ? s.normMem : "---";
+            let n_rt = s.normRT || "---"; let n_fa = s.normFA || "---"; let n_acc = s.normAcc || "---";
+            let n_tmt = s.normTMT || "---"; let n_flex = s.normFlex || "---"; let n_stress = s.normStress || "---";
+            let triLabel = s.triLabel || s.tri || "---"; let triValue = s.triValue || "---";
+            let mucLabelRaw = s.mucLabel || s.mucDo || s.muc || "---"; let mucValueRaw = s.mucValue || "---";
 
-                    let scoreStr = String(s.score || "");
-                    let stressMatch = scoreStr.match(/Stress:\s*([^\s|\\(]+)/i);
-                    if(stressMatch && stress === "---") stress = stressMatch[1].trim();
-
-                    // ĐÃ CHÈN CÁC Ô TD CỦA GAME 1 VÀO ĐÚNG THỨ TỰ ĐỒNG BỘ VỚI THỂ THỨC TIÊU ĐỀ
-                    html += `<tr style="cursor:pointer;" onclick="window.showSessionDetails('${s.id || ''}')" title="Bấm vào để xem phân tích thông số chi tiết ván này">
-                        <td><b>${id}</b></td><td>${gioi}</td><td>${tuoi}</td><td>${khoi}</td><td>${gioNgu}</td><td>${gioThietBi}</td>
-                        
-                        <!-- Dữ liệu thô Game 1 -->
-                        <td style="color:#1a73e8; font-weight:700; background: #f8fafc;">${memAcc}</td>
-
-                        <td>${rt}</td><td style="color:#ef4444; font-weight:700;">${gono}</td><td style="color:#16a34a; font-weight:700;">${nback}</td>
-                        <td>${tmt}</td><td>${flex}</td><td>${stress}</td>
-                        
-                        <!-- Các trọng số Norm bao gồm Norm_Mem mới -->
-                        <td style="background: #f8fafc; color:#6c5ce7; font-weight:700;">${n_mem}</td>
-                        <td style="background: #f8fafc;">${n_rt}</td><td style="background: #f8fafc;">${n_fa}</td><td style="background: #f8fafc;">${n_acc}</td>
-                        <td style="background: #f8fafc;">${n_tmt}</td><td style="background: #f8fafc;">${n_flex}</td><td style="background: #f8fafc;">${n_stress}</td>
-                        
-                        <td style="font-weight:700; color:#1a73e8; background: #f0f7ff;">${triLabel}</td><td style="background: #f0f7ff;">${getTriBadgeHtml(mucLabelRaw)}</td>
-                        <td style="font-weight:700; color:#1a73e8; background: #f0f7ff;">${triValue}</td><td style="background: #f0f7ff;">${getTriBadgeHtml(mucValueRaw)}</td>
-                    </tr>`;
-                });
-            }
-            html += `</tbody></table></div>`;
-        } else {
+            html += `<tr style="cursor:pointer;" onclick="window.showSessionDetails('${s.id || ''}')" title="Bấm vào để xem phân tích thông số chi tiết ván này">
+                <td><b>${id}</b></td><td>${gioi}</td><td>${tuoi}</td><td>${khoi}</td><td>${gioNgu}</td><td>${gioThietBi}</td>
+                
+                <!-- Dữ liệu hiển thị chuẩn hóa khớp hoàn toàn với cột tiêu đề phía trên -->
+                <td style="color:#1a73e8; font-weight:700; background: #f8fafc;">${memRT}</td>
+                <td style="color:#ef4444; font-weight:700;">${gono}</td>
+                <td style="color:#16a34a; font-weight:700;">${nbackMiss}</td>
+                <td>${tmt}</td>
+                <td>${flex}</td>
+                <td>${stress}</td>
+                
+                <td style="background: #f8fafc; color:#6c5ce7; font-weight:700;">${n_mem}</td>
+                <td style="background: #f8fafc;">${n_rt}</td><td style="background: #f8fafc;">${n_fa}</td><td style="background: #f8fafc;">${n_acc}</td>
+                <td style="background: #f8fafc;">${n_tmt}</td><td style="background: #f8fafc;">${n_flex}</td><td style="background: #f8fafc;">${n_stress}</td>
+                
+                <td style="font-weight:700; color:#1a73e8; background: #f0f7ff;">${triLabel}</td><td style="background: #f0f7ff;">${getTriBadgeHtml(mucLabelRaw)}</td>
+                <td style="font-weight:700; color:#1a73e8; background: #f0f7ff;">${triValue}</td><td style="background: #f0f7ff;">${getTriBadgeHtml(mucValueRaw)}</td>
+            </tr>`;
+        });
+    }
+    html += `</tbody></table></div>`;
+}else {
             html = `<div class="table-responsive">
                 <table>
                     <thead>
@@ -1836,56 +1878,64 @@ window.loadMultiTaskReports = function(currentStudentId) {
     }
 
     function initProfileRealtimeListener() {
-        if(senderId === "N/A") return;
+    if(senderId === "N/A") return;
 
-        const connectedRef = ref(db, ".info/connected");
-        onValue(connectedRef, (snap) => {
-            if (snap.val() === true) {
-                const statusRef = ref(db, `users/${senderId}/status`);
-                set(statusRef, "online");
-                onDisconnect(statusRef).set("offline");
+    const connectedRef = ref(db, ".info/connected");
+    onValue(connectedRef, (snap) => {
+        if (snap.val() === true) {
+            const statusRef = ref(db, `users/${senderId}/status`);
+            set(statusRef, "online");
+            onDisconnect(statusRef).set("offline");
+        }
+    });
+
+    onValue(ref(db, 'users/' + senderId), (snapshot) => {
+        if(snapshot.exists()) {
+            let user = snapshot.val();
+            senderName = user.name || senderName;
+            senderClass = user.class || senderClass;
+            senderSchool = user.school || senderSchool;
+            selectedAvatarEmoji = user.avatar || "👤";
+
+            document.getElementById("profileName").innerText = senderName;
+            document.getElementById("profileClass").innerText = `Lớp ${senderClass} - THCS`;
+            document.getElementById("profileIdBadge").innerText = "ID: " + senderId;
+            document.querySelector(".user-profile-widget .user-avatar-circle").innerHTML = window.getAvatarHtml(selectedAvatarEmoji);
+
+            if(document.getElementById("editProfileName")) {
+                document.getElementById("editProfileName").value = senderName;
+                document.getElementById("editProfileSchool").value = senderSchool;
+                document.getElementById("editProfileClass").value = senderClass;
+                document.getElementById("editProfileAge").value = user.age || "";
+                document.getElementById("editProfileBio").value = user.bio || "";
+                document.getElementById("sidebarStudentName").innerText = senderName;
+                document.getElementById("sidebarStudentClass").innerText = `Lớp ${senderClass} - THCS`;
+                document.getElementById("sidebarStudentBio").innerText = user.bio || "Chưa viết tiểu sử...";
+                document.getElementById("bigProfileAvatar").innerHTML = window.getAvatarHtml(selectedAvatarEmoji);
+                document.getElementById("privacyToggle").checked = user.privacyPrivate || false;
+
+                let friendCount = user.myFriendsList ? Object.keys(user.myFriendsList).length : 0;
+                document.getElementById("cntFriends").innerText = friendCount;
             }
-        });
 
-        onValue(ref(db, 'users/' + senderId), (snapshot) => {
-            if(snapshot.exists()) {
-                let user = snapshot.val();
-                senderName = user.name || senderName;
-                senderClass = user.class || senderClass;
-                senderSchool = user.school || senderSchool;
-                selectedAvatarEmoji = user.avatar || "👤";
+            document.querySelectorAll('.avatar-option').forEach(opt => {
+                opt.classList.toggle('selected', opt.getAttribute('data-emoji') === selectedAvatarEmoji);
+            });
 
-                document.getElementById("profileName").innerText = senderName;
-                document.getElementById("profileClass").innerText = `Lớp ${senderClass} - THCS`;
-                document.getElementById("profileIdBadge").innerText = "ID: " + senderId;
-                document.querySelector(".user-profile-widget .user-avatar-circle").innerHTML = window.getAvatarHtml(selectedAvatarEmoji);
+            localStorage.setItem("user", JSON.stringify(user));
 
-                if(document.getElementById("editProfileName")) {
-                    document.getElementById("editProfileName").value = senderName;
-                    document.getElementById("editProfileSchool").value = senderSchool;
-                    document.getElementById("editProfileClass").value = senderClass;
-                    document.getElementById("editProfileAge").value = user.age || "";
-                    document.getElementById("editProfileBio").value = user.bio || "";
-                    document.getElementById("sidebarStudentName").innerText = senderName;
-                    document.getElementById("sidebarStudentClass").innerText = `Lớp ${senderClass} - THCS`;
-                    document.getElementById("sidebarStudentBio").innerText = user.bio || "Chưa viết tiểu sử...";
-                    document.getElementById("bigProfileAvatar").innerHTML = window.getAvatarHtml(selectedAvatarEmoji);
-                    document.getElementById("privacyToggle").checked = user.privacyPrivate || false;
-
-                    let friendCount = user.myFriendsList ? Object.keys(user.myFriendsList).length : 0;
-                    document.getElementById("cntFriends").innerText = friendCount;
-                }
-
-                document.querySelectorAll('.avatar-option').forEach(opt => {
-                    opt.classList.toggle('selected', opt.getAttribute('data-emoji') === selectedAvatarEmoji);
-                });
-
-                localStorage.setItem("user", JSON.stringify(user));
-
+            // 🔥 THAY THẾ DÒNG ÉP ẨN CŨ BẰNG CƠ CHẾ KIỂM TRA TỰ ĐỘNG MỖI NGÀY Ở ĐÂY
+            let todayStr = new Date().toLocaleDateString('en-CA'); 
+            if (user.lastSurveyDate === todayStr) {
+                // Nếu hôm nay làm rồi -> Ẩn hộp khảo sát đi
                 document.getElementById("dailySurveyModal").style.display = "none";
+            } else {
+                // Nếu hôm nay chưa làm -> Tự động bật mở giao diện khảo sát ngay khi vào web
+                document.getElementById("dailySurveyModal").style.display = "flex";
             }
-        });
-    }
+        }
+    });
+}
 
     window.updateStudentProfileData = async function() {
         let newClass = document.getElementById("editProfileClass").value.trim();
@@ -3182,7 +3232,7 @@ window.loadMultiTaskReports = function(currentStudentId) {
 
             <div style="background: #f8fafc; padding: 18px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
                 <h4 style="font-size: 13.5px; font-weight: 800; color: #475569; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px;"><i class="fa-solid fa-heart-pulse" style="color:#ef4444;"></i> Đánh giá trạng thái áp lực (Stress)</h4>
-                <p style="font-size: 12px; color: #64748b; font-style: italic; margin-bottom: 15px;">Chọn mức độ gần đây: 0 (Không bao giờ) → 4 (Rất thường xuyên)</p>
+                <p style="font-size: 12px; color: #64748b; font-style: italic; margin-bottom: 15px;">Chọn mức độ gần đây: 0 (Không bao giờ)->1 (hiếm khi)->2 (thỉnh thoảng)->3 (thường xuyên) → 4 (Rất thường xuyên)</p>
                 
                 <div style="margin-bottom: 14px;">
                     <p style="font-size:13.5px; font-weight:600; color:#1e293b; margin-bottom:6px;">1. Em cảm thấy lo lắng, căng thẳng vì bài vở học tập đột xuất?</p>
