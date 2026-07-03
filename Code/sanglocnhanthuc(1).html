@@ -61,7 +61,8 @@
         #gameBoard { display: grid; gap: 10px; grid-template-columns: repeat(var(--cols), 1fr); perspective: 1000px; justify-items: center; padding: 5px 0; width: 100%; max-width: 100%; margin: 0 auto; }
         @media (min-width: 550px) { #gameBoard { gap: 14px; } }
 
-        .card { width: 100%; max-width: var(--card-size); aspect-ratio: 1 / 1; position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* Tốc độ lật nhanh 0.2s */
+        .card { width: 100%; max-width: var(--card-size); aspect-ratio: 1 / 1; position: relative; cursor: pointer; transform-style: preserve-3d; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
         .card.is-flipped { transform: rotateY(180deg); }
 
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 26px; transition: all 0.2s; }
@@ -155,10 +156,17 @@
                 <p style="margin-bottom: 15px; color: #64748b; font-weight: 500;">Xin chào <b id="displayPlayerName" style="color:#1a73e8;"></b>! Sẵn sàng rèn luyện trí nhớ chưa?</p>
                 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-    <!-- Thêm nút Luyện tập ở đây -->
-    <button class="btn btn-level" data-level="practice" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; box-shadow: 0 4px 12px rgba(108,92,231,0.2);">Chế độ Luyện tập (Làm quen tay)</button>
-    
-    <button class="btn btn-level" data-level="basic">Cơ bản (3x4)</button>
+                    
+                    <div class="custom-level-box" style="border-color: #a29bfe; background: #f3f0ff; margin-bottom: 8px;">
+                        <label style="color: #6c5ce7; font-weight: 800;">🎯 Chế độ Luyện tập (Tự chọn ô)</label>
+                        <div class="custom-inputs-row">
+                            <input type="number" id="practiceRows" placeholder="Hàng" min="2" max="6" value="2">
+                            <input type="number" id="practiceCols" placeholder="Cột" min="2" max="6" value="3">
+                        </div>
+                        <button class="btn" id="startPracticeBtn" style="width: 100%; background: linear-gradient(135deg, #a29bfe, #6c5ce7); box-shadow: 0 4px 12px rgba(108,92,231,0.2);">Vào chơi luyện tập</button>
+                    </div>
+                    
+                    <button class="btn btn-level" data-level="basic">Cơ bản (3x4)</button>
                     <button class="btn btn-level" data-level="medium">Bình thường (4x5)</button>
                     <button class="btn btn-level" data-level="advanced">Nâng cao (4x6)</button>
                     
@@ -237,7 +245,7 @@
                     </ul>
                 </div>
                 
-                <div style="margin-bottom: 5px;">
+                <div style="margin-top: 5px;">
                     <strong style="color: #1a73e8; font-size: 14.5px;">🧠 Mức độ nguy cơ:</strong>
                     <p style="color: #475569; font-size: 13px; margin-top: 3px;">Phân loại sàng lọc tổng hợp (Thấp - Trung bình - Cao) giữa tốc độ xử lý thời gian và tần suất lỗi, hỗ trợ phát hiện sớm trạng thái mỏi mệt nhận thức hoặc quá tải thần kinh.</p>
                 </div>
@@ -363,7 +371,7 @@
     let cachedLeaderboardData = []; 
     let currentGameResult = {};
     let userInfo = {};
-    window.globalUsersData = {}; // Bộ nhớ tạm lưu trữ danh sách users đồng bộ từ Cloud
+    window.globalUsersData = {}; 
 
     let savedUser = localStorage.getItem("user");
     if(savedUser) {
@@ -470,15 +478,19 @@
     let hasResumed = false;
     let consecutiveErrorsPostResume = 0;
 
+    // ĐÃ THÊM: Biến quản lý số lỗi sai liên tục và cấu hình thời gian lật của ván hiện tại
+    let consecutivePracticeErrors = 0;
+    let currentMemorizeTime = 1000;
+
     const allIcons = ['🎨','🧩','🚀','💡','🎵','📚','🧬','🤖','🌍','🧭','🔬','⏳','⭐','🧠','✏️','🏆','🎯','🔑']; 
-const levelConfig = {
-    // Cấu hình lưới 4 cặp (4 cột x 2 hàng) để quen tay, thời gian nhìn trước 3 giây
-    practice: { pairs: 4, cols: 4, rows: 2, size: 95, memorizeTime: 3000 }, 
-    basic: { pairs: 6, cols: 4, rows: 3, size: 95, memorizeTime: 800 },
+    
+    const levelConfig = {
+        basic: { pairs: 6, cols: 4, rows: 3, size: 95, memorizeTime: 800 },
         medium: { pairs: 10, cols: 5, rows: 4, size: 85, memorizeTime: 1500 },
         advanced: { pairs: 12, cols: 6, rows: 4, size: 80, memorizeTime: 2000 }
     };
     window.customLevelConfig = null;
+    window.customPracticeConfig = null; 
 
     function showScreen(screenId) { 
         Object.values(screens).forEach(screen => screen.classList.remove('active')); 
@@ -497,6 +509,31 @@ const levelConfig = {
     document.getElementById('closeGlossaryBtn').onclick = () => hideModal('glossary');
 
     document.getElementById('levelSelectScreen').addEventListener('click', (e) => { if (e.target.matches('.btn-level')) { currentLevel = e.target.getAttribute('data-level'); startCountdownAndGame(); } });
+
+    document.getElementById('startPracticeBtn').addEventListener('click', () => {
+        let r = parseInt(document.getElementById('practiceRows').value);
+        let c = parseInt(document.getElementById('practiceCols').value);
+        if (isNaN(r) || isNaN(c)) { alert("⚠️ Vui lòng nhập đầy đủ hàng và cột!"); return; }
+        if (r < 2 || c < 2) { alert("⚠️ Số hàng và cột tối thiểu phải từ 2!"); return; }
+        let totalCards = r * c;
+        if (totalCards % 2 !== 0) { alert("⚠️ Tổng số ô chơi phải là số chẵn để tạo cặp!"); return; }
+        let pairsNeeded = totalCards / 2;
+        if (pairsNeeded > allIcons.length) { alert(`⚠️ Tối đa hỗ trợ cấu hình ${allIcons.length} cặp hình.`); return; }
+
+        // ĐÃ CẬP NHẬT: Tính toán thời gian xem trước (memorizeTime) dựa trên tổng số ô
+        let memoTime = 1000; 
+        if (totalCards === 4) memoTime = 500;
+        else if (totalCards === 6) memoTime = 600;
+        else if (totalCards > 10 && totalCards <= 14) memoTime = 1400;
+        else if (totalCards > 20 && totalCards <= 26) memoTime = 2000;
+        else if (totalCards >= 28 && totalCards <= 36) memoTime = 2800;
+        else { memoTime = totalCards * 100; } // Dự phòng cho các lưới khác không nằm trong danh sách
+
+        let dynamicSize = c === 5 ? 85 : (c >= 6 ? 80 : 95);
+        currentLevel = 'practice';
+        window.customPracticeConfig = { pairs: pairsNeeded, cols: c, rows: r, size: dynamicSize, memorizeTime: memoTime };
+        startCountdownAndGame();
+    });
 
     document.getElementById('startCustomBtn').addEventListener('click', () => {
         let r = parseInt(document.getElementById('customRows').value);
@@ -541,13 +578,25 @@ const levelConfig = {
     quitGameBtn.addEventListener('click', () => { if (confirm('Bạn chắc chắn muốn hủy ván đo lường này?')) { endGame(true); showScreen('level'); } });
 
     function startGame(level) {
-        const config = (level === 'custom') ? window.customLevelConfig : levelConfig[level];
+        let config;
+        if (level === 'custom') {
+            config = window.customLevelConfig;
+        } else if (level === 'practice') {
+            config = window.customPracticeConfig;
+        } else {
+            config = levelConfig[level];
+        }
+
 		isPracticeMode = (level === 'practice');
         totalPairs = config.pairs; matchedPairs = 0; moves = 0; errors = 0; timeRemaining = 240; timeSpent = 0;
         firstCard = null; secondCard = null; lockBoard = true; isPaused = false; isGameActive = true;
         
         hasResumed = false;
         consecutiveErrorsPostResume = 0;
+
+        // ĐÃ THÊM: Đồng bộ và reset bộ đếm lỗi liên tục khi ván đấu mới được khởi tạo
+        consecutivePracticeErrors = 0;
+        currentMemorizeTime = config.memorizeTime;
 
         pauseOverlay.classList.remove('active');
         pauseGameBtn.innerHTML = '⏸ Tạm ngừng'; pauseGameBtn.style.backgroundColor = '#f59e0b';
@@ -573,23 +622,22 @@ const levelConfig = {
     }
 
     function startTimer() {
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        if (isPaused) return;
-        timeSpent++;
-        
-        // Logic mới dành cho chế độ Luyện tập
-        if (isPracticeMode) {
-            document.getElementById('gameTimer').textContent = `⏱️ Quen tay: ${timeSpent}s`;
-            return; 
-        }
-        
-        timeRemaining--;
-        let m = Math.floor(timeRemaining / 60), s = timeRemaining % 60;
-        document.getElementById('gameTimer').textContent = `⏱️ ${m}:${s < 10 ? '0' : ''}${s}`;
-        if (timeRemaining <= 0) { clearInterval(timerInterval); alert("⏰ Đã hết thời gian ván đấu!"); endGame(false, true); }
-    }, 1000);
-}
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (isPaused) return;
+            timeSpent++;
+            
+            if (isPracticeMode) {
+                document.getElementById('gameTimer').textContent = `⏱️ Quen tay: ${timeSpent}s`;
+                return; 
+            }
+            
+            timeRemaining--;
+            let m = Math.floor(timeRemaining / 60), s = timeRemaining % 60;
+            document.getElementById('gameTimer').textContent = `⏱️ ${m}:${s < 10 ? '0' : ''}${s}`;
+            if (timeRemaining <= 0) { clearInterval(timerInterval); alert("⏰ Đã hết thời gian ván đấu!"); endGame(false, true); }
+        }, 1000);
+    }
 
     function flipCard() {
         if (isPaused || lockBoard || this === firstCard || this.classList.contains('is-flipped')) return; 
@@ -604,6 +652,11 @@ const levelConfig = {
         firstCard.removeEventListener('click', flipCard); secondCard.removeEventListener('click', flipCard);
         matchedPairs++; playTing(); updateStats(); resetBoard();
         
+        // ĐÃ THÊM: Ghép trúng cặp thành công thì xóa bộ đếm lỗi sai liên tục
+        if (isPracticeMode) {
+            consecutivePracticeErrors = 0;
+        }
+        
         if (hasResumed) {
             consecutiveErrorsPostResume = 0;
         }
@@ -612,25 +665,31 @@ const levelConfig = {
     }
 
     function unflipCards() {
-    errors++; updateStats();
-    firstCard.classList.add('shake-error'); secondCard.classList.add('shake-error');
-
-    if (!hasResumed && errors === 20) {
-        // Nếu là chế độ luyện tập thì bỏ qua chặn Stress Modal
-        if (isPracticeMode) {
-            setTimeout(() => {
-                firstCard.classList.remove('shake-error'); secondCard.classList.remove('shake-error');
-                firstCard.classList.remove('is-flipped'); secondCard.classList.remove('is-flipped'); resetBoard();
-            }, 600);
-            return;
-        }
+        errors++; updateStats();
         
-        setTimeout(() => {
-            clearInterval(timerInterval); isGameActive = false;
-            currentGameResult = { date: new Date().toISOString(), level: currentLevel, time: timeSpent, moves: moves, correct: matchedPairs, errors: errors, risk: "Cao", stressLevel: "100% - Nghiêm trọng (Não bộ bị quá tải cực hạn)", advice: "Hệ thống tự động bảo vệ nhận thức ngắn hạn." };
-            saveGameScoreToSheet(currentGameResult, true); showModal('stress'); 
-        }, 400); return;
-    }
+        // ĐÃ THÊM: Tăng bộ đếm sai liên tục nếu đang ở phòng Luyện tập
+        if (isPracticeMode) {
+            consecutivePracticeErrors++;
+        }
+
+        firstCard.classList.add('shake-error'); secondCard.classList.add('shake-error');
+
+        if (!hasResumed && errors === 20) {
+            if (isPracticeMode) {
+                setTimeout(() => {
+                    firstCard.classList.remove('shake-error'); secondCard.classList.remove('shake-error');
+                    firstCard.classList.remove('is-flipped'); secondCard.classList.remove('is-flipped'); resetBoard();
+                    kiểm_tra_cơ_chế_trợ_giúp_luyện_tập();
+                }, 600);
+                return;
+            }
+            
+            setTimeout(() => {
+                clearInterval(timerInterval); isGameActive = false;
+                currentGameResult = { date: new Date().toISOString(), level: currentLevel, time: timeSpent, moves: moves, correct: matchedPairs, errors: errors, risk: "Cao", stressLevel: "100% - Nghiêm trọng (Não bộ bị quá tải cực hạn)", advice: "Hệ thống tự động bảo vệ nhận thức ngắn hạn." };
+                saveGameScoreToSheet(currentGameResult, true); showModal('stress'); 
+            }, 400); return;
+        }
         
         if (hasResumed) {
             consecutiveErrorsPostResume++;
@@ -644,7 +703,41 @@ const levelConfig = {
         setTimeout(() => {
             firstCard.classList.remove('shake-error'); secondCard.classList.remove('shake-error');
             firstCard.classList.remove('is-flipped'); secondCard.classList.remove('is-flipped'); resetBoard();
+            
+            // Khởi chạy kiểm tra cơ chế trợ giúp sau khi các thẻ đã úp xuống hẳn
+            kiểm_tra_cơ_chế_trợ_giúp_luyện_tập();
         }, 600); 
+    }
+
+    // ĐÃ THÊM: Hàm xử lý lật bài tự động cứu cánh cho người chơi ở chế độ luyện tập
+    function kiểm_tra_cơ_chế_trợ_giúp_luyện_tập() {
+        if (!isPracticeMode) return;
+
+        let totalCells = totalPairs * 2;
+        let remainingCards = totalCells - (matchedPairs * 2);
+        let triggerFlash = false;
+
+        if (totalCells > 10 && totalCells <= 14 && consecutivePracticeErrors >= 6 && remainingCards > 4) {
+            triggerFlash = true;
+        } else if (totalCells > 20 && totalCells <= 26 && consecutivePracticeErrors >= 10 && remainingCards > 6) {
+            triggerFlash = true;
+        } else if (totalCells >= 28 && totalCells <= 36 && consecutivePracticeErrors >= 15 && remainingCards > 6) {
+            triggerFlash = true;
+        }
+
+        if (triggerFlash) {
+            consecutivePracticeErrors = 0; 
+            lockBoard = true;
+            
+            // Chỉ lật các ô chưa hoàn thành lên (các ô đang úp trên bàn)
+            const unmatchedCards = document.querySelectorAll('.card:not(.is-flipped)');
+            unmatchedCards.forEach(card => card.classList.add('is-flipped'));
+            
+            setTimeout(() => {
+                unmatchedCards.forEach(card => card.classList.remove('is-flipped'));
+                lockBoard = false;
+            }, currentMemorizeTime);
+        }
     }
 
     function resetBoard() { [firstCard, secondCard, lockBoard] = [null, null, false]; }
@@ -655,20 +748,16 @@ const levelConfig = {
         document.getElementById('gameErrors').textContent = `❌ Sai: ${errors}`;
     }
 
-    
-    
 	function saveGameScoreToSheet(resultObj, isStress = false) {
-    // 🔽 THÊM ĐOẠN NÀY VÀO ĐẦU HÀM 🔽
-    if (isPracticeMode) {
-        console.log("Chế độ luyện tập: Hệ thống không ghi nhận điểm số lên bảng xếp hạng.");
-        return; // Dừng hàm ngay tại đây, không chạy các lệnh lưu Firebase ở dưới nữa
-    }
-    // 🔼 THÊM ĐOẠN NÀY VÀO ĐẦU HÀM 🔼
+        if (isPracticeMode) {
+            console.log("Chế độ luyện tập: Hệ thống không ghi nhận điểm số lên bảng xếp hạng.");
+            return; 
+        }
 
-    let levelText = resultObj.level === 'basic' ? 'Cơ bản' : (resultObj.level === 'medium' ? 'Bình thường' : (resultObj.level === 'advanced' ? 'Nâng cao' : 'Tự chọn'));
-    let schoolClassInfo = "Lớp " + userInfo.lop + " - " + userInfo.truong;
-    let finalGameName = `Memory Matching (${levelText})` + (isStress ? " [STRESS_REJECT_LB]" : "");
-    let scoreId = "SCORE_" + userInfo.id + "_" + Date.now();
+        let levelText = resultObj.level === 'basic' ? 'Cơ bản' : (resultObj.level === 'medium' ? 'Bình thường' : (resultObj.level === 'advanced' ? 'Nâng cao' : 'Tự chọn'));
+        let schoolClassInfo = "Lớp " + userInfo.lop + " - " + userInfo.truong;
+        let finalGameName = `Memory Matching (${levelText})` + (isStress ? " [STRESS_REJECT_LB]" : "");
+        let scoreId = "SCORE_" + userInfo.id + "_" + Date.now();
 
         set(ref(db, 'scores/' + scoreId), {
             studentId: userInfo.id, 
@@ -751,12 +840,10 @@ const levelConfig = {
         const firstTab = document.querySelector('#lbTabsContainer .tab-btn[data-tab="Cơ bản"]');
         if(firstTab) firstTab.classList.add('active');
 
-        // Bước 1 nâng cấp: Đọc đồng thời cả nút 'scores' và nút 'users' trên Firebase
         Promise.all([get(ref(db, 'scores')), get(ref(db, 'users'))]).then(([scoresSnapshot, usersSnapshot]) => {
             if (!scoresSnapshot.exists()) { lbContent.innerHTML = "<p>Chưa có dữ liệu lịch sử đo lường.</p>"; return; }
             
             let rawData = scoresSnapshot.val();
-            // Lưu dữ liệu danh sách users vào biến toàn cục để đối chiếu ID ở bước sau
             window.globalUsersData = usersSnapshot.exists() ? usersSnapshot.val() : {};
             
             cachedLeaderboardData = window.flattenDynamicNodes(rawData, 'gameName').filter(s => s.gameName && s.gameName.includes("Memory Matching") && !s.gameName.includes("[STRESS_REJECT_LB]"));
@@ -819,15 +906,12 @@ const levelConfig = {
             let badgeBg = "rgba(34, 197, 94, 0.1)", badgeColor = "#22c55e";
             if (item.displayRisk.includes("Trung bình")) { badgeBg = "rgba(245, 158, 11, 0.1)"; badgeColor = "#f59e0b"; }
 
-            // Bước 2 nâng cấp: Dùng studentId để tìm tài khoản tương ứng gốc trong danh sách users
             let studentId = item.studentId;
             let userProfile = (window.globalUsersData && studentId) ? window.globalUsersData[studentId] : null;
 
-            // Ưu tiên bốc tên Trường và Lớp trực tiếp từ nick đăng ký của tài khoản users gốc
             let schoolPart = (userProfile ? (userProfile.school || userProfile.schoolName || userProfile.truong) : "") || item.school || item.schoolName || item.truong || "";
             let classPart = (userProfile ? (userProfile.class || userProfile.lop) : "") || item.class || item.lop || "";
 
-            // Nếu là dòng dữ liệu cũ bị khuyết thông tin tài khoản, chạy thuật toán bóc tách từ chuỗi dự phòng schoolClass
             if (!schoolPart && item.schoolClass) {
                 let separators = [/ \- /, /\-/, / \– /, /\–/, / \— /, /\—/, /,/, /\|/, /\//];
                 let parts = [];
@@ -854,14 +938,12 @@ const levelConfig = {
                 }
             }
 
-            // Chuẩn hóa định dạng hiển thị Lớp
             if (!classPart || classPart === "Khối lớp --" || classPart.trim() === "") {
                 classPart = "---";
             } else if (!classPart.toLowerCase().startsWith("lớp")) {
                 classPart = "Lớp " + classPart;
             }
 
-            // Chuẩn hóa định dạng hiển thị Trường (Tuyệt đối không hiện chữ chung chung "Trường học")
             if (!schoolPart || schoolPart === "Trường học" || schoolPart === "Không xác định" || schoolPart.trim() === "") {
                 schoolPart = "---";
             }
@@ -910,8 +992,6 @@ const levelConfig = {
         updateStats(); isGameActive = true; lockBoard = false; startTimer(); 
     });
 
-    
-
     document.getElementById('playAgainBtn').onclick = () => { hideModal('result'); showScreen('level'); };
     closeResultModal.onclick = () => hideModal('result'); 
     closeLeaderboardModal.onclick = () => hideModal('leaderboard'); closeStressBtn.onclick = () => { hideModal('stress'); showScreen('level'); };
@@ -926,37 +1006,33 @@ const levelConfig = {
 
     triggerAutoPlayOnLoad();
 	
-	
 	function bufferToBase64(buffer) {
-    let binary = '';
-    let bytes = new Uint8Array(buffer);
-    for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i]);
+        let binary = '';
+        let bytes = new Uint8Array(buffer);
+        for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
     }
-    return btoa(binary);
-}
 
-async function napFontTiengViet(doc) {
-    try {
-        // Tải font Roboto Thường và Bold từ CDN công cộng
-        const r = await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf');
-        const b = await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf');
-        const bufR = await r.arrayBuffer();
-        const bufB = await b.arrayBuffer();
-        
-        // Đăng ký font vào hệ thống file ảo của jsPDF
-        doc.addFileToVFS("Roboto-Regular.ttf", bufferToBase64(bufR));
-        doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
-        
-        doc.addFileToVFS("Roboto-Bold.ttf", bufferToBase64(bufB));
-        doc.addFont("Roboto-Bold.ttf", "Roboto", "bold");
-        
-        // Kích hoạt mặc định
-        doc.setFont("Roboto", "normal");
-    } catch(err) {
-        console.error("Không nạp được font tiếng Việt trực tuyến:", err);
+    async function napFontTiengViet(doc) {
+        try {
+            const r = await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf');
+            const b = await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf');
+            const bufR = await r.arrayBuffer();
+            const bufB = await b.arrayBuffer();
+            
+            doc.addFileToVFS("Roboto-Regular.ttf", bufferToBase64(bufR));
+            doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+            
+            doc.addFileToVFS("Roboto-Bold.ttf", bufferToBase64(bufB));
+            doc.addFont("Roboto-Bold.ttf", "Roboto", "bold");
+            
+            doc.setFont("Roboto", "normal");
+        } catch(err) {
+            console.error("Không nạp được font tiếng Việt trực tuyến:", err);
+        }
     }
-}
 </script>
 </body>
 </html>
