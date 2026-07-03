@@ -68,7 +68,19 @@
         transition: 0.2s; 
         white-space: nowrap; 
     }
-    .tab-btn:hover { color: #0f172a; }
+    .tab-btn { 
+    flex: 1 0 auto; /* SỬA TẠI ĐÂY: Thay vì flex: 1, hãy đổi thành flex: 1 0 auto */
+    padding: 11px 12px; 
+    border: none; 
+    background: transparent; 
+    color: #475569; 
+    font-weight: 700; 
+    font-size: 12px; 
+    cursor: pointer; 
+    border-radius: 10px; 
+    transition: 0.2s; 
+    white-space: nowrap; 
+}:hover { color: #0f172a; }
     .tab-btn.active { background: #ffffff; color: #1a73e8; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
 
     .form-panel { display: none; width: 100%; }
