@@ -10,6 +10,7 @@
   ],
   "routes": [
     { "src": "/api/ai-chat", "dest": "server.js" },
+    { "src": "/login", "dest": "/login.html" }, 
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
