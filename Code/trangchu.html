@@ -15,22 +15,20 @@
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     
     body { 
-        min-height: 100vh;
-        background: linear-gradient(-45deg, #ff7675, #74b9ff, #a29bfe, #fdcb6e, #55efc4); 
-        background-size: 400% 400%; 
-        animation: bgmove 15s ease infinite; 
-        display: flex; 
-        flex-direction: column;
-        overflow-x: hidden;
-        -ms-overflow-style: none;  
-        scrollbar-width: none;  
-    }
+    min-height: 100vh;
+    background: #f5f7fa; /* Màu trắng xám nhẹ, sạch sẽ và chuyên nghiệp */
+    display: flex; 
+    flex-direction: column;
+    overflow-x: hidden;
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+}
     
     body::-webkit-scrollbar {
         display: none; 
     }
     
-    @keyframes bgmove { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
+    
 
     .top-navbar {
         width: 100%; height: 75px; background: rgba(255, 255, 255, 0.92);
@@ -302,9 +300,24 @@
         #privateChatInput { padding: 10px 14px !important; font-size: 13px !important; border-radius: 20px !important; }
         #sendPrivateChatBtn { padding: 8px 16px !important; font-size: 13px !important; border-radius: 20px !important; }
     }
+	
+	@keyframes pulse-red-alert {
+        0% { background: #ef4444; color: white; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+        70% { background: #dc2626; color: white; box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+        100% { background: #ef4444; color: white; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .nav-tab-btn.news-flash {
+        animation: pulse-red-alert 1.2s infinite !important;
+        background: #ef4444 !important;
+        color: white !important;
+        font-weight: 800 !important;
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.6) !important;
+    }
 </style>
 </head>
 <body>
+
+
 
 <audio id="bgMusic" src="Nhạc nền vui của Độ mixi.mp3" loop autoplay></audio>
 
@@ -326,7 +339,7 @@
         <button class="nav-tab-btn" data-tab="feedback" onclick="window.switchTab('feedback')"><i class="fa-solid fa-comment-dots"></i> Phản hồi</button>
         <button class="nav-tab-btn" data-tab="rating" onclick="window.switchTab('rating')"><i class="fa-solid fa-star"></i> Đánh giá</button>
         <button class="nav-tab-btn" data-tab="profile" onclick="window.switchTab('profile')"><i class="fa-solid fa-user-gear"></i> Hồ sơ của tôi</button>
-		<button class="nav-tab-btn" data-tab="posts" onclick="window.switchTab('posts')"><i class="fa-solid fa-images"></i> Bản Tin Học Đường</button>
+		<button class="nav-tab-btn" data-tab="posts" id="nav-tab-news" onclick="window.switchTab('posts')"><i class="fa-solid fa-newspaper"></i> News</button>
         <button class="nav-tab-btn" data-tab="chat" onclick="window.switchTab('chat')"><i class="fa-solid fa-comments"></i> Phòng Chat</button>
     </nav>
     
@@ -460,13 +473,23 @@
     </div>
 
     <div id="panel-stats" class="tab-panel">
-        <div class="panel-card-container">
-            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
-                <h2 style="font-size:18px; font-weight:800; color:#1e293b;">
-                    <i class="fa-solid fa-chart-line" style="color:#1a73e8; margin-right:8px;"></i> Trung Tâm Phân Tích Chỉ Số Đo Lường
-                </h2>
-                <button id="btnExportStatsPDF" class="btn" style="background:#475569; border-radius:50px; padding:8px 18px; font-size:13px; color:white; border:none; cursor:pointer;" onclick="window.exportComprehensivePDF()"><i class="fa-solid fa-file-pdf"></i> Xuất Báo Cáo PDF</button>
+    <div class="panel-card-container">
+        <!-- Phần tiêu đề và nút bấm đã được nâng cấp giao diện -->
+        <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+            <h2 style="font-size:18px; font-weight:800; color:#1e293b;">
+                <i class="fa-solid fa-chart-line" style="color:#1a73e8; margin-right:8px;"></i> Trung Tâm Phân Tích Chỉ Số Đo Lường
+            </h2>
+            <div style="display:flex; gap:10px;">
+                <button id="btnAIEvaluate" class="btn" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); border-radius:50px; padding:8px 18px; font-size:13px; color:white; border:none; cursor:pointer; width:auto;" onclick="window.analyzeDataWithAI()"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Phân Tích Xu Hướng</button>
+                <button id="btnExportStatsPDF" class="btn" style="background:#475569; border-radius:50px; padding:8px 18px; font-size:13px; color:white; border:none; cursor:pointer; width:auto;" onclick="window.exportComprehensivePDF()"><i class="fa-solid fa-file-pdf"></i> Xuất Báo Cáo PDF</button>
             </div>
+        </div>
+
+        <!-- Hộp hiển thị kết quả phân tích của AI (Mặc định ẩn, AI chạy xong sẽ hiện) -->
+        <div id="aiAnalysisResultBox" class="panel-card-container" style="display:none; margin-bottom: 25px; background: #f8fafc; border-left: 6px solid #6c5ce7; padding: 20px; border-radius: 16px;">
+            <h4 style="color:#6c5ce7; font-weight:800; font-size:14px; margin-bottom:8px;"><i class="fa-solid fa-robot"></i> ĐÁNH GIÁ CHUYÊN SÂU TỪ TRỢ LÝ AI:</h4>
+            <p id="aiAnalysisText" style="font-size:13.5px; color:#334155; line-height:1.6; font-weight:500; white-space: pre-wrap;"></p>
+        </div>
             
             <div class="stats-sub-tabs">
                 <button class="sub-tab-btn active" onclick="window.filterStats('all', this)">☀️ Tất cả bài</button>
@@ -734,7 +757,7 @@
     <div style="display: grid; grid-template-columns: 1.8fr 1fr; gap: 25px; align-items: start;">
         
         <div>
-            <div class="panel-card-container" style="margin-bottom:20px; padding: 20px; background: #ffffff; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+            <div class="panel-card-container" id="createPostContainer" style="margin-bottom:20px; padding: 20px; background: #ffffff; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
                 <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
                     <div class="user-avatar-circle" id="postBoxAvatar" style="width: 40px; height: 40px; flex-shrink: 0;">👤</div>
                     <h4 style="font-size:15px; font-weight:700; color:#1e293b;">Tạo bài viết mới</h4>
@@ -861,6 +884,39 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+	onValue(ref(db, 'app_config/maintenance_mode'), (snapshot) => {
+        const isMaintenance = snapshot.exists() ? snapshot.val() : false;
+        const overlay = document.getElementById("maintenanceOverlay");
+        if (overlay) {
+            if (isMaintenance) {
+                overlay.style.display = "flex";
+                document.body.style.overflow = "hidden"; // Khóa màn hình không cho cuộn
+                const audio = document.getElementById("bgMusic");
+                if (audio) audio.pause(); // Tạm dừng nhạc nền
+            } else {
+                overlay.style.display = "none";
+                document.body.style.overflow = ""; // Mở khóa màn hình
+            }
+        }
+    });
+	
+	onValue(ref(db, 'app_config/active_games'), (snapshot) => {
+        if (snapshot.exists()) {
+            const games = snapshot.val();
+            for (let i = 1; i <= 5; i++) {
+                const gameKey = 'game' + i;
+                const cardElement = document.getElementById('card-' + gameKey);
+                
+                if (cardElement) {
+                    if (games[gameKey] && games[gameKey].status === false) {
+                        cardElement.style.display = 'none'; // Ẩn game nếu Admin tắt
+                    } else {
+                        cardElement.style.display = ''; // Hiện lại nếu Admin bật
+                    }
+                }
+            }
+        }
+    });
 	
 	async function hashPassword(password) {
         const msgBuffer = new TextEncoder().encode(password);
@@ -1043,11 +1099,17 @@
     }
 
     window.switchTab = function(tabId) {
-        document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId));
-        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === 'panel-' + tabId));
-        if (tabId === 'stats') window.loadMyStats();
-        if (tabId === 'posts') window.renderStudentTimelineFeed(); 
+    document.querySelectorAll('.nav-tab-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId));
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === 'panel-' + tabId));
+    if (tabId === 'stats') window.loadMyStats();
+    if (tabId === 'posts') {
+        // Khi bấm vào tab News -> Tắt chế độ nhấp nháy đỏ rực và cập nhật thời gian xem mới nhất
+        const newsTab = document.getElementById("nav-tab-news");
+        if (newsTab) newsTab.classList.remove("news-flash");
+        localStorage.setItem("last_viewed_news_time", Date.now().toString());
+        window.renderStudentTimelineFeed();
     }
+}
 
     window.logout = function() { if(confirm("Bạn có muốn đăng xuất khỏi hệ thống không?")) { localStorage.removeItem("user"); window.location.href = "../index.html"; } }
 
@@ -1375,6 +1437,62 @@ window.loadMultiTaskReports = function(currentStudentId) {
 
         document.getElementById("myStatsContent").innerHTML = html;
         window.renderStatsChartsEngine(filtered, gameKey);
+    }
+	window.analyzeDataWithAI = async function() {
+        const btn = document.getElementById("btnAIEvaluate");
+        const resultBox = document.getElementById("aiAnalysisResultBox");
+        const resultText = document.getElementById("aiAnalysisText");
+        
+        if (!rawScoreData || rawScoreData.length === 0) {
+            alert("⚠️ Em cần tham gia rèn luyện ít nhất 1 ván game để AI có dữ liệu phân tích nhé!");
+            return;
+        }
+
+        btn.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Đang đọc hiểu bảng điểm...";
+        btn.disabled = true;
+
+        // Chuẩn bị dữ liệu tinh gọn từ 10 lượt gần nhất gửi cho AI đọc
+        let dataSummary = rawScoreData.slice(-10).map((s, idx) => {
+            let details = window.parseScoreDetails(s);
+            return `Lượt ${idx+1}: Bài ${s.gameName} - Đúng: ${details.correct}, Sai: ${details.wrong}, Thời gian: ${details.time}s, Hiệu suất: ${window.extractAccuracyNum(s)}%`;
+        }).join("\n");
+
+        try {
+            const DIRECT_GROQ_KEY = window.MY_CONFIG ? window.MY_CONFIG.GROQ_API_KEY : "";
+            if (!DIRECT_GROQ_KEY) {
+                throw new Error("Không tìm thấy tệp cấu hình config.js hoặc API Key Groq chưa hợp lệ!");
+            }
+
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${DIRECT_GROQ_KEY}`
+                },
+                body: JSON.stringify({ 
+                    model: "llama-3.1-8b-instant",
+                    messages: [
+                        { 
+                            role: "system", 
+                            content: "Bạn là một chuyên gia tâm lý và chuyên gia phân tích dữ liệu nhận thức học đường THCS. Hãy đọc danh sách kết quả luyện tập sau và đưa ra lời nhận xét bằng Tiếng Việt ngắn gọn (dưới 120 từ), khen ngợi sự cố gắng, chỉ ra điểm mệt mỏi nếu có (sai nhiều hoặc thời gian chậm) và đưa ra lời khuyên rèn luyện thiết thực, thân thiện kèm emoji thích hợp." 
+                        },
+                        { role: "user", content: `Đây là nhật ký các lượt luyện tập gần nhất của học sinh:\n${dataSummary}` }
+                    ]
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error?.message || "Lỗi kết nối AI.");
+
+            resultText.innerHTML = data.choices[0].message.content.trim();
+            resultBox.style.display = "block";
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        } catch (err) {
+            alert("Không thể kết nối với Trợ lý phân tích: " + err.message);
+        } finally {
+            btn.innerHTML = "<i class='fa-solid fa-wand-magic-sparkles'></i> AI Phân Tích Xu Hướng";
+            btn.disabled = false;
+        }
     }
 
    window.exportComprehensivePDF = async function() {
@@ -1923,14 +2041,10 @@ window.loadMultiTaskReports = function(currentStudentId) {
             });
 
             localStorage.setItem("user", JSON.stringify(user));
-
-            // 🔥 THAY THẾ DÒNG ÉP ẨN CŨ BẰNG CƠ CHẾ KIỂM TRA TỰ ĐỘNG MỖI NGÀY Ở ĐÂY
             let todayStr = new Date().toLocaleDateString('en-CA'); 
             if (user.lastSurveyDate === todayStr) {
-                // Nếu hôm nay làm rồi -> Ẩn hộp khảo sát đi
                 document.getElementById("dailySurveyModal").style.display = "none";
             } else {
-                // Nếu hôm nay chưa làm -> Tự động bật mở giao diện khảo sát ngay khi vào web
                 document.getElementById("dailySurveyModal").style.display = "flex";
             }
         }
@@ -2684,11 +2798,32 @@ window.loadMultiTaskReports = function(currentStudentId) {
     });
 
     onValue(ref(db, 'posts'), (snapshot) => {
-        objGlobalPosts = snapshot.exists() ? snapshot.val() : {};
-        if(document.getElementById("panel-posts") && document.getElementById("panel-posts").classList.contains("active")) {
-            window.renderStudentTimelineFeed();
+    objGlobalPosts = snapshot.exists() ? snapshot.val() : {};
+    if(document.getElementById("panel-posts") && document.getElementById("panel-posts").classList.contains("active")) {
+        window.renderStudentTimelineFeed();
+    }
+    
+    // --- LOGIC THÔNG BÁO BÀI ĐĂNG MỚI (NEWS FLASH) ---
+    if (snapshot.exists()) {
+        let postsArray = Object.values(snapshot.val());
+        if (postsArray.length > 0) {
+            // Lấy mốc thời gian của bài viết mới nhất trên hệ thống
+            let latestPostTime = Math.max(...postsArray.map(p => p.timestamp || 0));
+            let lastViewedTime = parseInt(localStorage.getItem("last_viewed_news_time") || "0");
+            let isNewsTabActive = document.getElementById("nav-tab-news")?.classList.contains("active");
+            
+            if (latestPostTime > lastViewedTime) {
+                if (isNewsTabActive) {
+                    // Nếu đang ở sẵn tab News thì tự động cập nhật mốc thời gian đã xem
+                    localStorage.setItem("last_viewed_news_time", latestPostTime.toString());
+                } else {
+                    // Nếu đang ở tab khác thì kích hoạt cho nút News sáng đỏ rực lên
+                    document.getElementById("nav-tab-news")?.classList.add("news-flash");
+                }
+            }
         }
-    });
+    }
+});
 	
 	document.getElementById("studentPostContent").addEventListener("input", function() {
         let text = this.value.trim();
@@ -2769,122 +2904,128 @@ window.loadMultiTaskReports = function(currentStudentId) {
     }
 
     window.renderStudentTimelineFeed = function() {
-        let feedContainer = document.getElementById("studentPostFeedContainer");
-        if(!feedContainer) return;
-        feedContainer.innerHTML = "";
+    let feedContainer = document.getElementById("studentPostFeedContainer");
+    if(!feedContainer) return;
+    feedContainer.innerHTML = "";
 
-        let postBoxAvatarEl = document.getElementById("postBoxAvatar");
-        if(postBoxAvatarEl) postBoxAvatarEl.innerHTML = window.getAvatarHtml(selectedAvatarEmoji);
-
-        let list = Object.entries(objGlobalPosts).sort((a,b) => b[1].timestamp - a[1].timestamp);
-        let visibleCount = 0;
-
-        list.forEach(([postKey, post]) => {
-            if(post.visibility === "private" && post.authorId !== senderId) return; 
-            if(post.visibility === "friends" && post.authorId !== senderId && !myFriendsListGlobal[post.authorId]) return; 
-            if(post.authorId === "ADMIN" && post.visibility === "private") return; 
-
-            visibleCount++;
-            let myReaction = post.reactions && post.reactions[senderId] ? post.reactions[senderId].type : null;
-            let reactCount = post.reactions ? Object.keys(post.reactions).length : 0;
-            let whoReactedText = post.reactions ? Object.values(post.reactions).map(r => `${r.name} (${r.type})`).join(", ") : "";
-
-            let postActionsHtml = "";
-            if (post.authorId === senderId) {
-                postActionsHtml = `
-                    <span onclick="window.editStudentPost('${postKey}', '${post.content.replace(/'/g, "\\'")}')" style="color: #1a73e8; cursor: pointer; font-size: 11.5px; font-weight: bold; margin-right: 8px;"><i class="fa-solid fa-pen"></i> Sửa</span>
-                    <span onclick="window.deleteStudentPost('${postKey}')" style="color: #ef4444; cursor: pointer; font-size: 11.5px; font-weight: bold; margin-right: 12px;"><i class="fa-solid fa-trash"></i> Xóa</span>
-                `;
-            }
-
-            let commentContentHtml = "";
-            if(post.comments) {
-                let cmtEntries = Object.entries(post.comments).sort((a,b) => a[1].timestamp - b[1].timestamp);
-                let shortEntries = cmtEntries.slice(-2); 
-
-                if (cmtEntries.length > 2) {
-                    commentContentHtml += `
-                        <div onclick="window.openCommentModal('${postKey}')" style="color:#1877f2; font-size:12.5px; font-weight:700; cursor:pointer; text-align:left; margin: 4px 0 6px 4px;">
-                            <i class="fa-solid fa-comments"></i> Xem tất cả ${cmtEntries.length} bình luận...
-                        </div>`;
-                }
-
-                shortEntries.forEach(([cmtKey, cmt]) => {
-                    commentContentHtml += `
-                        <div style="background:#f1f5f9; padding:6px 12px; border-radius:10px; margin-top:4px; font-size:12.5px; text-align:left; color:#334155; width: fit-content; max-width:90%;">
-                            <b style="color:#1e293b;">${cmt.userName}</b>: ${cmt.text}
-                        </div>`;
-                });
-            }
-
-            let postInsertedImageHtml = "";
-            if (post.image) {
-                postInsertedImageHtml = `
-                    <div style="margin-top:12px; margin-bottom:12px; border-radius:8px; overflow:hidden; background:#f8fafc; border: 1px solid #f1f5f9; text-align:center;">
-                        <img src="${post.image}" style="max-width:100%; max-height:420px; object-fit:contain; display:inline-block; vertical-align:middle;">
-                    </div>
-                `;
-            }
-
-            feedContainer.innerHTML += `
-                <div class="panel-card-container" style="padding:16px; background:white; margin-bottom:1px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div class="chat-avatar-placeholder" style="width:38px; height:38px; margin:0; background:#f1f5f9; overflow:hidden;">${window.getAvatarHtml(post.avatar || "👤")}</div>
-                            <div style="text-align:left;">
-                                <h5 style="margin:0; font-size:14px; font-weight:700; color:#1e293b;">${post.authorName} ${post.authorId === 'ADMIN' ? '👑':''}</h5>
-                                <span style="font-size:11.5px; color:#64748b; font-weight:600;">${new Date(post.timestamp).toLocaleString("vi-VN")}</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center;">
-                            ${postActionsHtml}
-                            <span class="user-id-tag" style="background:${post.visibility==='public'?'#e8f0fe':(post.visibility==='friends'?'#fef3c7':'#fee2e2')}; color:${post.visibility==='public'?'#1a73e8':(post.visibility==='friends'?'#d97706':'#ef4444')}; padding:3px 10px; font-size:11px; font-weight:700;">
-                                ${post.visibility === 'public' ? '🌍 Công khai' : (post.visibility === 'friends' ? '👥 Bạn bè' : '🔒 Riêng tư')}
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <p style="font-size:14.5px; color:#1e293b; font-weight:500; line-height:1.5; margin-bottom:10px; text-align:left; white-space: pre-wrap; word-break: break-word;">${post.content}</p>
-                    
-                    ${postInsertedImageHtml}
-                    
-                    <div style="display:flex; justify-content: space-around; border-top:1px solid #f1f5f9; border-bottom:1px solid #f1f5f9; padding:8px 0; font-size:13.5px; font-weight:700; color: #64748b;">
-                        <div style="position: relative; flex:1; text-align:center;" 
-                             onmouseenter="document.getElementById('react-box-${postKey}').style.display='flex'" 
-                             onmouseleave="document.getElementById('react-box-${postKey}').style.display='none'">
-                            
-                            <span style="cursor:pointer; color:${myReaction ? '#ef4444':'#64748b'}; display:inline-flex; align-items:center; gap:6px; user-select:none; width:100%; justify-content:center; padding:6px 0; border-radius:6px;" 
-                                  onclick="window.handleReactClick('${postKey}')"
-                                  title="Danh sách các bạn đã tương tác: ${whoReactedText || 'Chưa có ai'}">
-                                <i class="fa-solid fa-heart"></i> ${myReaction ? `${myReaction} Cảm xúc` : 'Thích'} (${reactCount})
-                            </span>
-                            
-                            <div id="react-box-${postKey}" style="display: none; position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); background: white; border: 1px solid #cbd5e1; border-radius: 30px; padding: 6px 12px; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 999; align-items: center; white-space: nowrap;">
-                                <span onclick="window.submitReactionType('${postKey}', '❤️')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">❤️</span>
-                                <span onclick="window.submitReactionType('${postKey}', '😆')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">😆</span>
-                                <span onclick="window.submitReactionType('${postKey}', '😢')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">😢</span>
-                                <span onclick="window.submitReactionType('${postKey}', '😮')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">😮</span>
-                                <span onclick="window.submitReactionType('${postKey}', '😡')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">😡</span>
-                            </div>
-                        </div>
-                        <span style="cursor:pointer; flex:1; display:inline-flex; align-items:center; gap:6px; user-select:none; justify-content:center; padding:6px 0; border-radius:6px;" onclick="window.openCommentModal('${postKey}')">
-                            <i class="fa-regular fa-comment"></i> Bình luận (${post.comments ? Object.keys(post.comments).length : 0})
-                        </span>
-                        <span style="cursor:pointer; flex:1; color:#16a34a; display:inline-flex; align-items:center; gap:6px; user-select:none; justify-content:center; padding:6px 0; border-radius:6px;" onclick="window.openShareModal('${postKey}')">
-                            <i class="fa-solid fa-share-nodes"></i> Chia sẻ
-                        </span>
-                    </div>
-
-                    <div style="margin-top:10px; border-top: 1px dashed #f1f5f9; padding-top: 4px;">
-                        ${commentContentHtml}
-                    </div>
-                </div>`;
-        });
-
-        if(visibleCount === 0) {
-            feedContainer.innerHTML = "<p style='text-align:center; color:#94a3b8; font-style:italic; padding:20px;'>Chưa có bài viết nào hiển thị công khai phù hợp với em hôm nay.</p>";
-        }
+    // PHÂN QUYỀN: Chỉ hiển thị hộp đăng bài cho ADMIN, Học sinh không thể thấy và đăng
+    let createBox = document.getElementById("createPostContainer");
+    if (createBox) {
+        createBox.style.display = (senderId === 'ADMIN') ? "block" : "none";
     }
+
+    let postBoxAvatarEl = document.getElementById("postBoxAvatar");
+    if(postBoxAvatarEl) postBoxAvatarEl.innerHTML = window.getAvatarHtml(selectedAvatarEmoji);
+
+    let list = Object.entries(objGlobalPosts).sort((a,b) => b[1].timestamp - a[1].timestamp);
+    let visibleCount = 0;
+
+    list.forEach(([postKey, post]) => {
+        if(post.visibility === "private" && post.authorId !== senderId) return; 
+        if(post.visibility === "friends" && post.authorId !== senderId && !myFriendsListGlobal[post.authorId]) return; 
+        if(post.authorId === "ADMIN" && post.visibility === "private") return; 
+
+        visibleCount++;
+        let myReaction = post.reactions && post.reactions[senderId] ? post.reactions[senderId].type : null;
+        let reactCount = post.reactions ? Object.keys(post.reactions).length : 0;
+        let whoReactedText = post.reactions ? Object.values(post.reactions).map(r => `${r.name} (${r.type})`).join(", ") : "";
+
+        let postActionsHtml = "";
+        if (post.authorId === senderId) {
+            postActionsHtml = `
+                <span onclick="window.editStudentPost('${postKey}', '${post.content.replace(/'/g, "\\'")}')" style="color: #1a73e8; cursor: pointer; font-size: 11.5px; font-weight: bold; margin-right: 8px;"><i class="fa-solid fa-pen"></i> Sửa</span>
+                <span onclick="window.deleteStudentPost('${postKey}')" style="color: #ef4444; cursor: pointer; font-size: 11.5px; font-weight: bold; margin-right: 12px;"><i class="fa-solid fa-trash"></i> Xóa</span>
+            `;
+        }
+
+        let commentContentHtml = "";
+        if(post.comments) {
+            let cmtEntries = Object.entries(post.comments).sort((a,b) => a[1].timestamp - b[1].timestamp);
+            let shortEntries = cmtEntries.slice(-2); 
+
+            if (cmtEntries.length > 2) {
+                commentContentHtml += `
+                    <div onclick="window.openCommentModal('${postKey}')" style="color:#1877f2; font-size:12.5px; font-weight:700; cursor:pointer; text-align:left; margin: 4px 0 6px 4px;">
+                        <i class="fa-solid fa-comments"></i> Xem tất cả ${cmtEntries.length} bình luận...
+                    </div>`;
+            }
+
+            shortEntries.forEach(([cmtKey, cmt]) => {
+                commentContentHtml += `
+                    <div style="background:#f1f5f9; padding:6px 12px; border-radius:10px; margin-top:4px; font-size:12.5px; text-align:left; color:#334155; width: fit-content; max-width:90%;">
+                        <b style="color:#1e293b;">${cmt.userName}</b>: ${cmt.text}
+                    </div>`;
+            });
+        }
+
+        let postInsertedImageHtml = "";
+        if (post.image) {
+            postInsertedImageHtml = `
+                <div style="margin-top:12px; margin-bottom:12px; border-radius:8px; overflow:hidden; background:#f8fafc; border: 1px solid #f1f5f9; text-align:center;">
+                    <img src="${post.image}" style="max-width:100%; max-height:420px; object-fit:contain; display:inline-block; vertical-align:middle;">
+                </div>
+            `;
+        }
+
+        feedContainer.innerHTML += `
+            <div class="panel-card-container" style="padding:16px; background:white; margin-bottom:1px; border-radius: 14px; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="chat-avatar-placeholder" style="width:38px; height:38px; margin:0; background:#f1f5f9; overflow:hidden;">${window.getAvatarHtml(post.avatar || "👤")}</div>
+                        <div style="text-align:left;">
+                            <h5 style="margin:0; font-size:14px; font-weight:700; color:#1e293b;">${post.authorName} ${post.authorId === 'ADMIN' ? '👑':''}</h5>
+                            <span style="font-size:11.5px; color:#64748b; font-weight:600;">${new Date(post.timestamp).toLocaleString("vi-VN")}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        ${postActionsHtml}
+                        <span class="user-id-tag" style="background:${post.visibility==='public'?'#e8f0fe':(post.visibility==='friends'?'#fef3c7':'#fee2e2')}; color:${post.visibility==='public'?'#1a73e8':(post.visibility==='friends'?'#d97706':'#ef4444')}; padding:3px 10px; font-size:11px; font-weight:700;">
+                            ${post.visibility === 'public' ? '🌍 Công khai' : (post.visibility === 'friends' ? '👥 Bạn bè' : '🔒 Riêng tư')}
+                        </span>
+                    </div>
+                </div>
+                
+                <p style="font-size:14.5px; color:#1e293b; font-weight:500; line-height:1.5; margin-bottom:10px; text-align:left; white-space: pre-wrap; word-break: break-word;">${post.content}</p>
+                
+                ${postInsertedImageHtml}
+                
+                <div style="display:flex; justify-content: space-around; border-top:1px solid #f1f5f9; border-bottom:1px solid #f1f5f9; padding:8px 0; font-size:13.5px; font-weight:700; color: #64748b;">
+                    <div style="position: relative; flex:1; text-align:center;" 
+                         onmouseenter="document.getElementById('react-box-${postKey}').style.display='flex'" 
+                         onmouseleave="document.getElementById('react-box-${postKey}').style.display='none'">
+                        
+                        <span style="cursor:pointer; color:${myReaction ? '#ef4444':'#64748b'}; display:inline-flex; align-items:center; gap:6px; user-select:none; width:100%; justify-content:center; padding:6px 0; border-radius:6px;" 
+                              onclick="window.handleReactClick('${postKey}')"
+                              title="Danh sách các bạn đã tương tác: ${whoReactedText || 'Chưa có ai'}">
+                            <i class="fa-solid fa-heart"></i> ${myReaction ? `${myReaction} Cảm xúc` : 'Thích'} (${reactCount})
+                        </span>
+                        
+                        <div id="react-box-${postKey}" style="display: none; position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); background: white; border: 1px solid #cbd5e1; border-radius: 30px; padding: 6px 12px; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 999; align-items: center; white-space: nowrap;">
+                            <span onclick="window.submitReactionType('${postKey}', '❤️')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">❤️</span>
+                            <span onclick="window.submitReactionType('${postKey}', '😆')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">😆</span>
+                            <span onclick="window.submitReactionType('${postKey}', '😢')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">😢</span>
+                            <span onclick="window.submitReactionType('${postKey}', '😮')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">😮</span>
+                            <span onclick="window.submitReactionType('${postKey}', '😡')" style="cursor:pointer; font-size:20px; transition:0.1s;" onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'">😡</span>
+                        </div>
+                    </div>
+                    <span style="cursor:pointer; flex:1; display:inline-flex; align-items:center; gap:6px; user-select:none; justify-content:center; padding:6px 0; border-radius:6px;" onclick="window.openCommentModal('${postKey}')">
+                        <i class="fa-regular fa-comment"></i> Bình luận (${post.comments ? Object.keys(post.comments).length : 0})
+                    </span>
+                    <span style="cursor:pointer; flex:1; color:#16a34a; display:inline-flex; align-items:center; gap:6px; user-select:none; justify-content:center; padding:6px 0; border-radius:6px;" onclick="window.openShareModal('${postKey}')">
+                        <i class="fa-solid fa-share-nodes"></i> Chia sẻ
+                    </span>
+                </div>
+
+                <div style="margin-top:10px; border-top: 1px dashed #f1f5f9; padding-top: 4px;">
+                    ${commentContentHtml}
+                </div>
+            </div>`;
+    });
+
+    if(visibleCount === 0) {
+        feedContainer.innerHTML = "<p style='text-align:center; color:#94a3b8; font-style:italic; padding:20px;'>Chưa có bài viết nào hiển thị công khai phù hợp với em hôm nay.</p>";
+    }
+}
 
     window.handleReactClick = function(postKey) {
         window.submitReactionType(postKey, '❤️');
@@ -3348,6 +3489,15 @@ window.loadMultiTaskReports = function(currentStudentId) {
             <button onclick="document.getElementById('sessionDetailsModal').style.display='none'" class="btn-submit" style="background: #475569; border-radius: 50px; padding: 10px; font-size: 14px;">Đóng cửa sổ</button>
         </div>
     </div>
+</div>
+
+<div id="maintenanceOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 9999999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 25px;">
+    <div style="font-size: 90px; margin-bottom: 20px; animation: pulse 2s infinite alternate;">🛠️</div>
+    <h1 style="font-size: 26px; color: #1e293b; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: -0.5px;">Hệ thống đang tiến hành nâng cấp</h1>
+    <p style="font-size: 15px; color: #64748b; max-width: 520px; line-height: 1.6; font-weight: 600; padding: 0 10px;">
+        Chào em! Phòng tư vấn học đường và Ban Giám Hiệu đang tiến hành tối ưu hóa thuật toán sàng lọc, cấu trúc lại cơ sở dữ liệu và nâng cấp giao diện trò chơi đo lường nhận thức. <br>
+        <span style="color:#1a73e8; display:block; margin-top:10px;"><i class="fa-solid fa-clock"></i> Em vui lòng quay lại sau ít phút nhé! Cảm ơn em. 😊</span>
+    </p>
 </div>
 </body>
 </html>
