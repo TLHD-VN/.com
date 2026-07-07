@@ -329,7 +329,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyA4YeCvjrLI0bRtvotCOVfGLLsXjVJyb0",
@@ -1033,25 +1033,6 @@
             console.error("Không nạp được font tiếng Việt trực tuyến:", err);
         }
     }
-	
-	const overlayEl = document.getElementById("maintenanceOverlay");
-    if (typeof db !== 'undefined') {
-        onValue(ref(db, 'app_config/maintenance_status'), (snapshot) => {
-            if (snapshot.exists() && snapshot.val() === true) {
-                overlayEl.style.display = "flex";
-            } else {
-                overlayEl.style.display = "none";
-            }
-        });
-    }
 </script>
-<div id="maintenanceOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 9999999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 25px;">
-    <div style="font-size: 90px; margin-bottom: 20px; animation: pulse 2s infinite alternate;">🛠️</div>
-    <h1 style="font-size: 26px; color: #1e293b; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: -0.5px;">Hệ thống đang tiến hành nâng cấp</h1>
-    <p style="font-size: 15px; color: #64748b; max-width: 520px; line-height: 1.6; font-weight: 600; padding: 0 10px;">
-        Chào em! Phòng tư vấn học đường và Ban Giám Hiệu đang tiến hành tối ưu hóa thuật toán sàng lọc, cấu trúc lại cơ sở dữ liệu và nâng cấp giao diện trò chơi đo lường nhận thức. <br>
-        <span style="color:#1a73e8; display:block; margin-top:10px;"><i class="fa-solid fa-clock"></i> Em vui lòng quay lại sau ít phút nhé! Cảm ơn em. 😊</span>
-    </p>
-</div>
 </body>
 </html>
